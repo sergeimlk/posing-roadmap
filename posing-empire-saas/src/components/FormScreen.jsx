@@ -8,6 +8,7 @@ const CATEGORIES = [
   { value: 'Bodybuilding', icon: '💪', label: 'Bodybuilding' },
   { value: 'Figure', icon: '👑', label: 'Figure' },
   { value: 'Non compétiteur', icon: '🎯', label: 'Non compétiteur' },
+  { value: 'Autre', icon: '✨', label: 'Autre...' },
 ];
 
 const FEDERATIONS = [
@@ -22,6 +23,28 @@ const FEDERATIONS = [
   { value: 'WABBA', label: 'WABBA' },
   { value: 'AFBBN', label: 'AFBBN' },
   { value: 'Autre', label: 'Autre' },
+];
+
+const STAGE_INTENTS = [
+  { value: 'has_stage', label: "Oui, j'ai une compétition de prévue" },
+  { value: 'undecided', label: "Je ne sais pas encore / Indécis" },
+  { value: 'no_stage', label: "Non, pratique esthétique / perso (hors scène)" },
+];
+
+const HAS_SHORTS = [
+  { value: 'yes', label: "Oui, j'ai déjà ma tenue" },
+  { value: 'no', label: "Non, je dois encore me la procurer" },
+];
+
+const PHYSICAL_PROBLEMS = [
+  { value: 'symmetry', label: 'Symétrie & équilibre général' },
+  { value: 'vacuum', label: 'Contrôle abdominal / Vacuum' },
+  { value: 'dorsaux', label: 'Ouverture du dos (dorsaux)' },
+  { value: 'shoulders', label: 'Douleurs / Mobilité épaules' },
+  { value: 'pelvis', label: 'Mobilité hanches / bassin' },
+  { value: 'spine', label: 'Raideur colonne / omoplates' },
+  { value: 'rotation', label: 'Rotation / Torsion du buste' },
+  { value: 'legs', label: 'Activation jambes & fessiers' },
 ];
 
 const TIMES = [
@@ -44,10 +67,14 @@ export default function FormScreen({ onSubmit }) {
   const [formData, setFormData] = useState({
     fullname: '',
     category: '',
+    categoryOther: '',
     federation: '',
     federationOther: '',
+    stageIntent: '', // 'has_stage' | 'undecided' | 'no_stage'
+    hasShorts: '', // 'yes' | 'no'
     level: null,
     objectives: '',
+    selectedProblems: [], // Array of physical difficulty keys
     problems: '',
     time: '',
     needs: [],
@@ -59,6 +86,53 @@ export default function FormScreen({ onSubmit }) {
 
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleCategoryChange = useCallback((val) => {
+    setFormData(prev => {
+      const next = { ...prev, category: val };
+      if (val !== 'Autre') {
+        next.categoryOther = '';
+      }
+
+      if (val === 'Non compétiteur') {
+        next.stageIntent = 'no_stage';
+        next.federation = 'Aucune';
+        next.hasShorts = 'yes';
+      } else {
+        if (prev.category === 'Non compétiteur') {
+          next.stageIntent = '';
+          next.federation = '';
+          next.hasShorts = '';
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  const handleStageIntentChange = useCallback((val) => {
+    setFormData(prev => {
+      const next = { ...prev, stageIntent: val };
+      if (val === 'no_stage') {
+        next.federation = 'Aucune';
+        next.hasShorts = 'yes';
+      } else {
+        if (prev.stageIntent === 'no_stage') {
+          next.federation = '';
+          next.hasShorts = '';
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleProblem = useCallback((probValue) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedProblems: prev.selectedProblems.includes(probValue)
+        ? prev.selectedProblems.filter(p => p !== probValue)
+        : [...prev.selectedProblems, probValue]
+    }));
   }, []);
 
   const toggleNeed = useCallback((need) => {
@@ -75,7 +149,21 @@ export default function FormScreen({ onSubmit }) {
 
     // Validate required selectors
     if (!formData.category) { triggerShake('category'); return; }
-    if (formData.category !== 'Non compétiteur' && !formData.federation) { triggerShake('federation'); return; }
+    if (formData.category === 'Autre' && !formData.categoryOther.trim()) { triggerShake('categoryOther'); return; }
+
+    const isCompetitor = formData.category !== 'Non compétiteur';
+
+    if (isCompetitor) {
+      if (!formData.stageIntent) { triggerShake('stageIntent'); return; }
+
+      const needsFedAndShorts = formData.stageIntent !== 'no_stage';
+      if (needsFedAndShorts) {
+        if (!formData.federation) { triggerShake('federation'); return; }
+        if (formData.federation === 'Autre' && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
+        if (!formData.hasShorts) { triggerShake('hasShorts'); return; }
+      }
+    }
+
     if (formData.level === null) { triggerShake('level'); return; }
     if (!formData.time) { triggerShake('time'); return; }
     if (!consentAccepted) { triggerShake('consent'); return; }
@@ -83,14 +171,19 @@ export default function FormScreen({ onSubmit }) {
     // Collect data
     const submissionData = {
       fullname: formData.fullname.trim(),
-      category: formData.category,
-      federation: formData.category === 'Non compétiteur'
+      category: formData.category === 'Autre' ? (formData.categoryOther.trim() || 'Autre') : formData.category,
+      categoryOther: formData.categoryOther.trim(),
+      federation: formData.category === 'Non compétiteur' || formData.stageIntent === 'no_stage'
         ? 'Aucune'
         : (formData.federation === 'Autre'
           ? (formData.federationOther.trim() || 'Autre')
           : formData.federation),
+      federationOther: formData.federationOther.trim(),
+      stageIntent: formData.stageIntent,
+      hasShorts: formData.hasShorts,
       level: formData.level,
       objectives: formData.objectives.trim(),
+      selectedProblems: formData.selectedProblems,
       problems: formData.problems.trim(),
       time: formData.time,
       needs: formData.needs,
@@ -158,27 +251,88 @@ export default function FormScreen({ onSubmit }) {
             animate={shakeField === 'category' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label>Catégorie <span className="required">*</span></label>
-            <div className="selector-grid selector-grid-2x2">
+            <label id="label-category">Catégorie <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-category">
               {CATEGORIES.map(cat => (
                 <motion.button
                   key={cat.value}
                   type="button"
-                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}${cat.value === 'Non compétiteur' ? ' category-btn-full' : ''}`}
-                  onClick={() => updateField('category', cat.value)}
+                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
+                  onClick={() => handleCategoryChange(cat.value)}
+                  aria-pressed={formData.category === cat.value}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="selector-icon">{cat.icon}</span>
+                  <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
                   <span>{cat.label}</span>
                 </motion.button>
               ))}
             </div>
+            <AnimatePresence>
+              {formData.category === 'Autre' && (
+                <motion.div
+                  id="group-categoryOther"
+                  initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
+                  animate={{
+                    opacity: 1,
+                    height: 'auto',
+                    marginTop: '0.5rem',
+                    x: shakeField === 'categoryOther' ? [-6, 6, -6, 6, 0] : 0
+                  }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Précise ta catégorie..."
+                    value={formData.categoryOther}
+                    onChange={(e) => updateField('categoryOther', e.target.value)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
+
+          {/* Projet de scène / Compétition */}
+          <AnimatePresence mode="wait">
+            {formData.category && formData.category !== 'Non compétiteur' && (
+              <motion.div
+                className="form-group"
+                id="group-stageIntent"
+                key="stageIntent-group"
+                initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  marginBottom: '1.5rem',
+                  x: shakeField === 'stageIntent' ? [-6, 6, -6, 6, 0] : 0
+                }}
+                transition={{ duration: 0.4 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+              >
+                <label id="label-stageIntent">Projet de compétition / Scène <span className="required">*</span></label>
+                <div className="selector-grid selector-grid-vertical" role="group" aria-labelledby="label-stageIntent">
+                  {STAGE_INTENTS.map(opt => (
+                    <motion.button
+                      key={opt.value}
+                      type="button"
+                      className={`selector-btn selector-btn-sm${formData.stageIntent === opt.value ? ' selected' : ''}`}
+                      onClick={() => handleStageIntentChange(opt.value)}
+                      aria-pressed={formData.stageIntent === opt.value}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                    >
+                      {opt.label}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Fédération */}
           <AnimatePresence mode="wait">
-            {formData.category !== 'Non compétiteur' && (
+            {formData.category && formData.category !== 'Non compétiteur' && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
               <motion.div
                 className="form-group"
                 id="group-federation"
@@ -193,8 +347,8 @@ export default function FormScreen({ onSubmit }) {
                 transition={{ duration: 0.4 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               >
-                <label>Fédération <span className="required">*</span></label>
-                <div className="selector-grid selector-grid-fed">
+                <label id="label-federation">Fédération <span className="required">*</span></label>
+                <div className="selector-grid selector-grid-fed" role="group" aria-labelledby="label-federation">
                   {FEDERATIONS.map(fed => (
                     <motion.button
                       key={fed.value}
@@ -204,6 +358,7 @@ export default function FormScreen({ onSubmit }) {
                         updateField('federation', fed.value);
                         if (fed.value !== 'Autre') updateField('federationOther', '');
                       }}
+                      aria-pressed={formData.federation === fed.value}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -213,19 +368,64 @@ export default function FormScreen({ onSubmit }) {
                 </div>
                 <AnimatePresence>
                   {formData.federation === 'Autre' && (
-                    <motion.input
-                      type="text"
-                      placeholder="Précise ta fédération / compétition..."
-                      className="hidden-field visible"
-                      value={formData.federationOther}
-                      onChange={(e) => updateField('federationOther', e.target.value)}
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: 'auto', marginTop: '0.5rem' }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    <motion.div
+                      id="group-federationOther"
+                      initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
+                      animate={{
+                        opacity: 1,
+                        height: 'auto',
+                        marginTop: '0.5rem',
+                        x: shakeField === 'federationOther' ? [-6, 6, -6, 6, 0] : 0
+                      }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
                       transition={{ duration: 0.25 }}
-                    />
+                    >
+                      <input
+                        type="text"
+                        placeholder="Précise ta fédération / compétition..."
+                        value={formData.federationOther}
+                        onChange={(e) => updateField('federationOther', e.target.value)}
+                      />
+                    </motion.div>
                   )}
                 </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Tenue de scène */}
+          <AnimatePresence mode="wait">
+            {formData.category && formData.category !== 'Non compétiteur' && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
+              <motion.div
+                className="form-group"
+                id="group-hasShorts"
+                key="hasShorts-group"
+                initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  marginBottom: '1.5rem',
+                  x: shakeField === 'hasShorts' ? [-6, 6, -6, 6, 0] : 0
+                }}
+                transition={{ duration: 0.4 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+              >
+                <label id="label-hasShorts">As-tu déjà ta tenue de scène / posing (short, slip, maillot) ? <span className="required">*</span></label>
+                <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-hasShorts">
+                  {HAS_SHORTS.map(opt => (
+                    <motion.button
+                      key={opt.value}
+                      type="button"
+                      className={`selector-btn selector-btn-sm${formData.hasShorts === opt.value ? ' selected' : ''}`}
+                      onClick={() => updateField('hasShorts', opt.value)}
+                      aria-pressed={formData.hasShorts === opt.value}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {opt.label}
+                    </motion.button>
+                  ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -237,8 +437,8 @@ export default function FormScreen({ onSubmit }) {
             animate={shakeField === 'level' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label>Niveau actuel en posing <span className="required">*</span></label>
-            <div className="level-selector">
+            <label id="label-level">Niveau actuel en posing <span className="required">*</span></label>
+            <div className="level-selector" role="group" aria-labelledby="label-level">
               <div className="level-track">
                 <motion.div
                   className="level-fill"
@@ -253,9 +453,11 @@ export default function FormScreen({ onSubmit }) {
                     type="button"
                     className={`level-dot${formData.level === lvl.value ? ' active' : ''}${formData.level !== null && lvl.value < formData.level ? ' passed' : ''}`}
                     onClick={() => updateField('level', lvl.value)}
+                    aria-label={`Niveau ${lvl.value} : ${lvl.label}`}
+                    aria-pressed={formData.level === lvl.value}
                   >
-                    <span className="dot-circle">{lvl.value}</span>
-                    <span className="dot-label">{lvl.label}</span>
+                    <span className="dot-circle" aria-hidden="true">{lvl.value}</span>
+                    <span className="dot-label" aria-hidden="true">{lvl.label}</span>
                   </button>
                 ))}
               </div>
@@ -276,13 +478,42 @@ export default function FormScreen({ onSubmit }) {
             />
           </div>
 
+          {/* Difficultés physiques */}
+          <div className="form-group">
+            <label id="label-selectedProblems">Difficultés ou limitations physiques (Coche toutes les options concernées) :</label>
+            <div className="problems-grid" role="group" aria-labelledby="label-selectedProblems">
+              {PHYSICAL_PROBLEMS.map(prob => {
+                const isSelected = formData.selectedProblems.includes(prob.value);
+                return (
+                  <button
+                    key={prob.value}
+                    type="button"
+                    className={`problem-chip${isSelected ? ' selected' : ''}`}
+                    onClick={() => toggleProblem(prob.value)}
+                    role="checkbox"
+                    aria-checked={isSelected}
+                  >
+                    <span className="chip-checkbox">
+                      {isSelected && (
+                        <svg viewBox="0 0 16 16" fill="none" style={{ width: '10px', height: '10px', display: 'block' }}>
+                          <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="chip-label">{prob.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Problématiques */}
           <div className="form-group">
-            <label htmlFor="problems">Problématiques actuelles <span className="required">*</span></label>
+            <label htmlFor="problems">Précise tes difficultés physiques (Détails complémentaires, douleurs, raideurs...) <span className="required">*</span></label>
             <textarea
               id="problems"
               name="problems"
-              placeholder="Ex: Douleur épaule droite, limitation mobilité omoplate, difficulté vacuum, manque de symétrie..."
+              placeholder="Ex: Douleur épaule droite lors des poses arrières, limitation mobilité omoplate, difficulté sur le vacuum, etc."
               rows="3"
               required
               value={formData.problems}
@@ -297,14 +528,15 @@ export default function FormScreen({ onSubmit }) {
             animate={shakeField === 'time' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label>Temps de pratique quotidienne envisagé <span className="required">*</span></label>
-            <div className="selector-grid selector-grid-row">
+            <label id="label-time">Temps de pratique quotidienne envisagé <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-row" role="group" aria-labelledby="label-time">
               {TIMES.map(t => (
                 <motion.button
                   key={t.value}
                   type="button"
                   className={`selector-btn selector-btn-sm${formData.time === t.value ? ' selected' : ''}`}
                   onClick={() => updateField('time', t.value)}
+                  aria-pressed={formData.time === t.value}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -434,8 +666,9 @@ export default function FormScreen({ onSubmit }) {
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
         <div className="beta-links">
-          <a href="mailto:contact@posingempire.com" className="beta-link">contact@posingempire.com</a>
-          <a href="https://www.instagram.com/manael.posing/" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
+          <a href="https://www.skool.com/posing-empire-groupe-prive-6566" target="_blank" rel="noopener noreferrer" className="beta-link">
+            Contacte-moi directement sur Skool
+          </a>
         </div>
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏

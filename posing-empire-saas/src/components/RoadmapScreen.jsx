@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import { buildTimeline } from '../utils/buildTimeline';
 import { generatePDF } from '../utils/generatePDF';
@@ -18,6 +18,17 @@ function escHtml(str) {
 
 export default function RoadmapScreen({ data, onRestart }) {
   const [downloading, setDownloading] = useState(false);
+  const [openIndices, setOpenIndices] = useState([0]);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  
+  const toggleSection = useCallback((index) => {
+    setOpenIndices(prev =>
+      prev.includes(index)
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
+  }, []);
+
   const timeline = buildTimeline(data);
 
   const needsDisplay = data.needs.length
@@ -143,54 +154,161 @@ export default function RoadmapScreen({ data, onRestart }) {
           {/* TIMELINE */}
           <div className="roadmap-section-title">📋 Ta Roadmap Semaine par Semaine</div>
           <div className="roadmap-timeline">
-            {timeline.map((item, i) => (
-              <motion.div
-                key={i}
-                className="timeline-item"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.5, ease: 'easeOut' }}
-              >
-                <div className="timeline-left">
-                  <div className="timeline-number">S{String(i + 1).padStart(2, '0')}</div>
-                  <div className="timeline-line"></div>
-                </div>
-                <div className="timeline-content">
-                  <div className="timeline-phase">{item.phase}</div>
-                  <div className="timeline-title">{item.title}</div>
-                  <div className="timeline-tasks">
-                    {item.tasks.map((task, j) => {
-                      if (!task) return null;
-                      const content = (
-                        <>
-                          <span className="task-icon">{task.icon}</span>
-                          <span className="task-text">{task.text}</span>
-                        </>
-                      );
-                      if (task.link) {
-                        return (
-                          <a
-                            key={j}
-                            href={task.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="timeline-task timeline-task-link"
-                          >
-                            {content}
-                            <span className="link-arrow">↗</span>
-                          </a>
-                        );
-                      }
-                      return (
-                        <div key={j} className="timeline-task">
-                          {content}
-                        </div>
-                      );
-                    })}
+            {timeline.map((item, i) => {
+              const isFirst = i === 0;
+              const isOpen = openIndices.includes(i);
+              const isHovered = hoveredIndex === i;
+
+              return (
+                <motion.div
+                  key={i}
+                  className={`timeline-item ${!isFirst ? 'locked' : ''}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.08, duration: 0.5, ease: 'easeOut' }}
+                >
+                  <div className="timeline-left">
+                    <div className={`timeline-number ${!isFirst ? 'locked-number' : ''}`}>
+                      {isFirst ? (
+                        `S${String(i + 1).padStart(2, '0')}`
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: 'translateY(-1px)' }}>
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                      )}
+                    </div>
+                    <div className="timeline-line"></div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+
+                  <div className={`timeline-content ${!isFirst ? 'locked-content' : 'accordion-item'}`}>
+                    <div 
+                      className="accordion-header" 
+                      onClick={() => toggleSection(i)}
+                      onMouseEnter={() => !isFirst && setHoveredIndex(i)}
+                      onMouseLeave={() => !isFirst && setHoveredIndex(null)}
+                      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={isOpen}
+                      aria-controls={`accordion-body-${i}`}
+                      id={`accordion-header-${i}`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          toggleSection(i);
+                        }
+                      }}
+                    >
+                      <div style={{ flex: 1, paddingRight: '1rem', textAlign: 'left' }}>
+                        <div className="timeline-header-meta">
+                          <span className="timeline-phase">{item.phase}</span>
+                          {!isFirst && (
+                            <span className="lock-badge">
+                              🔒 Verrouillé
+                            </span>
+                          )}
+                        </div>
+                        <div className="timeline-title" style={{ margin: 0 }}>
+                          {!isFirst ? `S${String(i + 1).padStart(2, '0')} — ${item.title}` : item.title}
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+                        {/* Tooltip on Desktop */}
+                        {!isFirst && isHovered && (
+                          <div className="timeline-tooltip">
+                            Les prochaines roadmaps des prochaines semaines seront générées au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
+                          </div>
+                        )}
+                        <motion.span 
+                          className="accordion-arrow"
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                          style={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ color: isFirst ? '#D4A843' : '#666' }}>
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </motion.span>
+                      </div>
+                    </div>
+ 
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={`accordion-body-${i}`}
+                          role="region"
+                          aria-labelledby={`accordion-header-${i}`}
+                          className="accordion-body"
+                          initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                          animate={{ height: 'auto', opacity: 1, marginTop: '1rem' }}
+                          exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          style={{ overflow: 'hidden' }}
+                        >
+                          {isFirst ? (
+                            <div className="timeline-tasks">
+                              {item.tasks.map((task, j) => {
+                                if (!task) return null;
+                                const content = (
+                                  <>
+                                    <span className="task-icon">{task.icon}</span>
+                                    <span className="task-text">{task.text}</span>
+                                  </>
+                                );
+                                if (task.link) {
+                                  return (
+                                    <a
+                                      key={j}
+                                      href={task.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="timeline-task timeline-task-link"
+                                    >
+                                      {content}
+                                      <span className="link-arrow">↗</span>
+                                    </a>
+                                  );
+                                }
+                                return (
+                                  <div key={j} className="timeline-task">
+                                    {content}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <div className="timeline-locked-info">
+                              {item.description && (
+                                <p className="timeline-week-description">
+                                  {item.description}
+                                </p>
+                              )}
+                              <div className="locked-card">
+                                <div className="locked-card-header">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#D4A843', marginRight: '0.25rem' }}>
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                  </svg>
+                                  <span className="locked-card-title">Contenu verrouillé</span>
+                                </div>
+                                <p className="locked-text">
+                                  Les prochaines roadmaps des prochaines semaines seront générées au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
+                                </p>
+                                <div className="locked-card-footer">
+                                  Bilan hebdomadaire requis
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* FOOTER */}
@@ -208,8 +326,9 @@ export default function RoadmapScreen({ data, onRestart }) {
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
         <div className="beta-links">
-          <a href="mailto:contact@posingempire.com" className="beta-link">contact@posingempire.com</a>
-          <a href="https://www.instagram.com/manael.posing/" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
+          <a href="https://www.skool.com/posing-empire-groupe-prive-6566" target="_blank" rel="noopener noreferrer" className="beta-link">
+            Contacte-moi directement sur Skool
+          </a>
         </div>
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏

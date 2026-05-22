@@ -4,7 +4,7 @@
 // Génère une roadmap avec les vrais modules & liens Skool
 // ══════════════════════════════════════════════════════════════
 
-const SKOOL_BASE = 'https://www.skool.com/posing-empire-groupe-prive-6566/classroom';
+const SKOOL_BASE = "https://www.skool.com/posing-empire-groupe-prive-6566/classroom";
 
 // ── MODULE 1 LINKS ──
 const M1 = {
@@ -32,7 +32,7 @@ const M2 = {
   symetrieTraining: `${SKOOL_BASE}/b4d92f9f?md=4539abf40af6406991f80099fe25281d`,
   sangleAbdo: `${SKOOL_BASE}/b4d92f9f?md=a1c82e9d5f5b43fd8332aa09555e6de5`,
   dorsauxTheorie: `${SKOOL_BASE}/b4d92f9f?md=4b7bc6323a2b43b4a9aae6289cfc992a`,
-  dorsauxPratique: `${SKOOL_BASE}/b4d92f9f?md=d7077c893fee42c9ab12014f73f1ced6`,
+  dorsauxPratique: `${SKOOL_BASE}/d7077c893fee42c9ab12014f73f1ced6`,
 };
 
 // ── MODULE 4 LINKS (Classic & Body) ──
@@ -244,11 +244,9 @@ const M12 = {
   miseEnRelation: `${SKOOL_BASE}/6a58266e?md=e5de63ab2ea74ebf8e47947e015a27e1`,
 };
 
-const CALENDLY_DECOUVERTE = 'https://calendly.com/posing-session-reservation/appel-decouverte-posing-empire-afbbn-clone';
+const CALENDLY_DECOUVERTE = "https://calendly.com/posing-session-reservation/appel-decouverte-posing-empire-afbbn-clone";
 
-// ══════════════════════════════════════════════
 // Helper: create a task with optional link
-// ══════════════════════════════════════════════
 function t(icon, text, link) {
   return { icon, text, link: link || null };
 }
@@ -268,401 +266,200 @@ export function buildTimeline(data) {
   const weeks = [];
   const cat = data.category;
   const fed = data.federation;
-  const lvl = data.level;
-  const hasRoutine = data.needs.includes('routine_libre');
-  const hasPres = data.needs.includes('presentation_individuelle');
-  const isAccompagnement = data.needs.includes('accompagnement_1_1');
-  const problems = data.problems.toLowerCase();
+  const isAccompagnement = data.needs.includes("accompagnement_1_1");
+  const problems = (data.problems || "").toLowerCase();
 
   const isMP = cat === "Men's Physique";
-  const isCP = cat === 'Classic Physique';
-  const isBB = cat === 'Bodybuilding';
-  const isNonCompet = cat === 'Non compétiteur';
+  const isCP = cat === "Classic Physique";
+  const isBB = cat === "Bodybuilding";
+  const isNonCompet = cat === "Non compétiteur";
   const isCPorBB = isCP || isBB;
-  const isWNBF = fed === 'WNBF';
-  const isNPC = fed === 'NPC';
-  const isIFBB = fed === 'IFBB';
-
-  // ── Detect problems ──
-  const hasShoulderPain = /[ée]paule|shoulder/i.test(problems);
-  const hasMobility = /mobilit[ée]|omoplate|hanche|colonne|raideur|souplesse|bassin/i.test(problems);
-  const hasVacuum = /vacuum|abdo|ventre|sangle/i.test(problems);
-  const hasSymmetry = /sym[ée]tr|d[ée]s[ée]quilibr|asym/i.test(problems);
-  const hasTransitions = /transition|flu|enchaine/i.test(problems);
-  const hasDorsaux = /dorsa|lat|omoplate|protract/i.test(problems);
-  const hasRotation = /rotation|torsion|pivot/i.test(problems);
-  const hasQuads = /quad|jambe|cuisse/i.test(problems);
-  const hasIschios = /ischio|post[ée]rieur/i.test(problems);
-  const hasFessiers = /fess|glute/i.test(problems);
-  const hasSideChestIssue = /side chest/i.test(problems);
-  const hasSideRelaxIssue = /side relax/i.test(problems);
-  const hasBackIssue = /back|dos/i.test(problems);
-  const hasFrontIssue = /front/i.test(problems);
 
   // ═══════════════════════════════════
-  // SEMAINE 1 — TON POINT DE DÉPART
+  // SEMAINE 1 — TON POINT DE DÉPART & FONDATIONS
   // ═══════════════════════════════════
-  const s1Tasks = [
-    t('📹', 'Le mindset chez Posing Empire', M1.mindset),
-  ];
-  // Add category-specific intro video
-  if (isMP) s1Tasks.push(t('📹', "Men's Physique — Présentation", M1.catMP));
-  else if (isCP) s1Tasks.push(t('📹', 'Classic Physique — Présentation', M1.catCP));
-  else if (isBB) s1Tasks.push(t('📹', 'Bodybuilding — Présentation', M1.catBB));
-  else if (isNonCompet) s1Tasks.push(t('📹', 'Non compétiteur — Présentation', M1.catNonCompet));
+  const s1Tasks = [];
 
-  s1Tasks.push(t('🎁', 'Les bonus Posing Empire', M1.bonus));
-  s1Tasks.push(t('🏆', 'Best Poser Award — Concours mensuel', M1.bestPoser));
-
-  weeks.push({ phase: 'Point de départ', title: 'Module 1 — Ton Point de Départ', tasks: s1Tasks });
-
-  // ═══════════════════════════════════
-  // SEMAINE 1-2 — FONDATIONS (Level 1)
-  // ═══════════════════════════════════
-  const s2Tasks = [
-    t('📖', 'Le vocabulaire du poseur', M2.vocabulaire),
-    t('📹', 'La méthodologie pour poser', M2.methodologie),
-    t('📹', 'Organiser sa pratique', M2.organiser),
-    t('📹', 'Créer son set up', M2.setup),
-  ];
-  if (!isNonCompet && !fed) {
-    s2Tasks.push(t('📹', 'Choisir sa fédération', M2.choisirFed));
+  // 1. Tenue de scène
+  if (cat !== "Non compétiteur" && data.hasShorts === "no") {
+    s1Tasks.push(t("👙", "Slip de Posing / Tenue de Scène - Les choix obligatoires", M4.tenueScene));
   }
+
+  // 2. Mindset & Prés  // 3. Fondations
+  s1Tasks.push(t("📖", "Le vocabulaire du poseur", M2.vocabulaire));
+  s1Tasks.push(t("📹", "La méthodologie pour poser", M2.methodologie));
+  s1Tasks.push(t("📹", "Organiser sa pratique", M2.organiser));
+  s1Tasks.push(t("📹", "Créer son set up", M2.setup));
+  s1Tasks.push(t("📊", "Posing Note (Carnet de Posing Google Sheet)", M11.posingNote));
+
+  // 4. Stage Intent / Orientation
+  if (data.stageIntent === "undecided") {
+    s1Tasks.push(t("📹", "Choisir sa fédération", M2.choisirFed));
+    s1Tasks.push(t("📹", "Choisir sa catégorie - Introduction", M2.choisirCatIntro));
+    s1Tasks.push(t("📹", "Choisir sa catégorie - Hommes", M2.choisirCatHomme));
+  } else if (fed && fed !== "Aucune" && fed !== "Autre" && FED_LINKS[fed]) {
+    const fData = FED_LINKS[fed];
+    if (fData.pres) {
+      s1Tasks.push(t("📹", "Fédération " + fed + " — Présentation & Règlements", fData.pres));
+    }
+    if (isMP && fData.mp) {
+      s1Tasks.push(t("📖", "Règlement Men's Physique — " + fed, fData.mp));
+    } else if (isCP && fData.cp) {
+      s1Tasks.push(t("📖", "Règlement Classic Physique — " + fed, fData.cp));
+    } else if (isBB && fData.bb) {
+      s1Tasks.push(t("📖", "Règlement Bodybuilding — " + fed, fData.bb));
+    }
+  }
+
+  // 5. Physical Difficulties & Category Foundations
+  const selProbs = data.selectedProblems || [];
+  const hasSymmetry = selProbs.includes("symmetry") || /sym[ée]tr|d[ée]s[ée]quilibr|asym/i.test(problems);
+  const hasVacuum = selProbs.includes("vacuum") || /vacuum|abdo|ventre|sangle/i.test(problems);
+  const hasDorsaux = selProbs.includes("dorsaux") || /dorsa|lat|omoplate|protract/i.test(problems);
+  const hasShoulderPain = selProbs.includes("shoulders") || /[ée]paule|shoulder/i.test(problems);
+  const hasPelvis = selProbs.includes("pelvis") || /hanche|bassin/i.test(problems);
+  const hasSpine = selProbs.includes("spine") || /colonne|omoplate|raideur|souplesse/i.test(problems);
+  const hasRotation = selProbs.includes("rotation") || /rotation|torsion|pivot/i.test(problems);
+  const hasLegs = selProbs.includes("legs") || /ischio|post[ée]rieur|fess|glute|quad|jambe|cuisse/i.test(problems);
+
   if (hasSymmetry) {
-    s2Tasks.push(t('📹', 'La symétrie en bodybuilding', M2.symetrieBB));
-    s2Tasks.push(t('📹', 'Résoudre une asymétrie (posing)', M2.symetrieResoudre));
-    s2Tasks.push(t('📹', 'Résoudre une asymétrie (training)', M2.symetrieTraining));
+    s1Tasks.push(t("📹", "La symétrie en bodybuilding", M2.symetrieBB));
+    s1Tasks.push(t("📹", "Résoudre une asymétrie (posing)", M2.symetrieResoudre));
+    s1Tasks.push(t("📹", "Résoudre une asymétrie (training)", M2.symetrieTraining));
   }
-  if (hasVacuum || hasSideChestIssue) {
-    s2Tasks.push(t('📹', 'La sangle abdominale', M2.sangleAbdo));
+  if (isCP || isBB || hasVacuum) {
+    s1Tasks.push(t("📹", "La sangle abdominale", M2.sangleAbdo));
+    s1Tasks.push(t("📹", "Introduction au Vacuum", M9.intro));
+    s1Tasks.push(t("📹", "Tout savoir sur le vacuum", M9.toutSavoir));
   }
-  if (hasDorsaux || hasBackIssue) {
-    s2Tasks.push(t('📹', 'Ouvrir les dorsaux — Théorie', M2.dorsauxTheorie));
-    s2Tasks.push(t('📹', 'Ouvrir les dorsaux — Pratique', M2.dorsauxPratique));
+  if (hasDorsaux) {
+    s1Tasks.push(t("📹", "Ouvrir les dorsaux — Théorie", M2.dorsauxTheorie));
+    s1Tasks.push(t("📹", "Ouvrir les dorsaux — Pratique", M2.dorsauxPratique));
   }
-  weeks.push({ phase: 'Fondations', title: 'Module 2 — Les Fondations (Level 1)', tasks: s2Tasks });
-
-  // ═══════════════════════════════════
-  // SEMAINE 3-4 — MODULE CATÉGORIE
-  // ═══════════════════════════════════
-  if (isCPorBB) {
-    // ── Classic & Body (Module 4) ──
-    const s3Tasks = [
-      t('📹', 'Introduction — Classic & Body', M4.intro),
-      t('📹', 'Placement symétrique (jambes)', M4.jambesSymetrique),
-    ];
-    if (isCP) s3Tasks.push(t('📹', 'Placement asymétrique (jambes)', M4.jambesAsymetrique));
-
-    // Quarter turns
-    s3Tasks.push(t('📹', 'Quarts de tour — Front relax', M4.frontRelax));
-    if (hasFrontIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode de mise en place — Front relax', M4.frontRelaxMethode));
-    s3Tasks.push(t('📹', 'Quarts de tour — Side relax', M4.sideRelax));
-    if (hasSideRelaxIssue) s3Tasks.push(t('📹', 'Méthode de mise en place — Side relax', M4.sideRelaxMethode));
-    s3Tasks.push(t('📹', 'Quarts de tour — Back relax', M4.backRelax));
-    if (hasBackIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode de mise en place — Back relax', M4.backRelaxMethode));
-
-    s3Tasks.push(t('📹', 'Tenue de scène', M4.tenueScene));
-
-    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Classic & Body — Placements & Quarts de Tour', tasks: s3Tasks });
-
-    // ── Mandatories ──
-    const s4Tasks = [];
-    if (isBB || (isCP && !isWNBF)) {
-      s4Tasks.push(t('📹', 'Front Double Biceps', M4.frontDoubleBiceps));
-    }
-    if (isCP && isWNBF) {
-      s4Tasks.push(t('📹', 'Classic Front Double Biceps', M4.classicFDB));
-    }
-    if (isBB) s4Tasks.push(t('📹', 'Front Lat Spread', M4.frontLatSpread));
-    if (isBB || (isCP && !isWNBF)) {
-      s4Tasks.push(t('📹', 'Side Chest', M4.sideChest));
-    }
-    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Side Chest', M4.classicSideChest));
-    if (isBB || (isCP && isIFBB)) s4Tasks.push(t('📹', 'Side Triceps', M4.sideTriceps));
-    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Side Triceps', M4.classicSideTriceps));
-    if (isBB || (isCP && !isWNBF)) s4Tasks.push(t('📹', 'Back Double Biceps', M4.backDoubleBiceps));
-    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Back Double Biceps', M4.classicBDB));
-    if (isBB) s4Tasks.push(t('📹', 'Back Lat Spread', M4.backLatSpread));
-    s4Tasks.push(t('📹', 'Abs and Thighs', M4.absAndThighs));
-
-    // Most Muscular (BB only)
-    if (isBB) {
-      s4Tasks.push(t('📹', 'Most Muscular — Hands Clasped', M4.mostMuscHandsCl));
-      if (isWNBF) {
-        s4Tasks.push(t('📹', 'Most Muscular — Hands on Hips', M4.mostMuscHandsHips));
-        s4Tasks.push(t('📹', 'Most Muscular — Crab Pose', M4.mostMuscCrab));
-      }
-    }
-    // Classic poses (CP)
-    if (isCP) {
-      s4Tasks.push(t('📹', 'Classic Pose — Tea Cup', M4.classicTeaCup));
-      s4Tasks.push(t('📹', 'Classic Pose — Abs & Biceps', M4.classicAbsBiceps));
-      if (lvl >= 2) s4Tasks.push(t('📹', 'Classic Pose — Arnold Pose', M4.classicArnold));
-    }
-
-    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Mandatories & Poses Obligatoires', tasks: s4Tasks });
-
-    // ── Transitions ──
-    const s5Tasks = [
-      t('📹', 'Transitions — Quarts de tour', M4.transQT),
-    ];
-    if (isBB) s5Tasks.push(t('📹', 'Transitions — Mandatories Bodybuilding', M4.transBB));
-    if (isCP && !isWNBF) s5Tasks.push(t('📹', 'Transitions — Mandatories Classic Physique', M4.transCP));
-    if (isCP && isWNBF) s5Tasks.push(t('📹', 'Transitions — Classic Physique (WNBF)', M4.transCPwnbf));
-    if (isCP) s5Tasks.push(t('📹', 'Transitions — Classic Poses', M4.transClassicPoses));
-    if (hasSideChestIssue) s5Tasks.push(t('🏋️', 'Exercice : Plaquer l\'ischio sur le side chest', M4.exIschio));
-    if (hasSideRelaxIssue) s5Tasks.push(t('🏋️', 'Exercice : Tendre les jambes sur la side relax', M4.exTendreJambes));
-
-    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Transitions', tasks: s5Tasks });
-
-  } else if (isMP) {
-    // ── Men's Physique (Module 6) ──
-    const s3Tasks = [
-      t('📹', "Introduction — Men's Physique", M6.intro),
-      t('📹', 'Front Pose', M6.frontPose),
-    ];
-    if (!isNPC) s3Tasks.push(t('📹', 'Side Pose', M6.sidePose));
-    if (isNPC) {
-      s3Tasks.push(t('📹', 'Back Pose — NPC', M6.backPoseNPC));
-      if (hasBackIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode mise en place — Back Pose NPC', M6.backPoseNPCmethode));
-    } else {
-      s3Tasks.push(t('📹', 'Back Pose — IFBB/WNBF', M6.backPoseIFBB));
-    }
-    weeks.push({ phase: 'Catégorie', title: "Module 6 — Men's Physique — Les Poses", tasks: s3Tasks });
-
-    // ── Transitions MP ──
-    const s4Tasks = [];
-    if (isNPC) s4Tasks.push(t('📹', 'Transitions — NPC', M6.transNPC));
-    else s4Tasks.push(t('📹', 'Transitions — IFBB/WNBF', M6.transIFBB));
-    weeks.push({ phase: 'Catégorie', title: "Module 6 — Men's Physique — Transitions", tasks: s4Tasks });
-
-  } else if (isNonCompet) {
-    // Foundations are enough, add some specific guidance
-    weeks.push({
-      phase: 'Catégorie',
-      title: 'Pratique — Posing Non-Compétiteur',
-      tasks: [
-        t('📹', 'Le vocabulaire du poseur (révision)', M2.vocabulaire),
-        t('🏋️', 'Exercice : Pratiquer les quarts de tour face miroir', null),
-        t('📐', 'Auto-filmage : Analyser ta posture et tes placements', null),
-      ]
-    });
+  if (hasShoulderPain) {
+    s1Tasks.push(t("🧘", "Protraction omoplates — Horizontale", M8.protractionH));
+    s1Tasks.push(t("🧘", "Massage avec balle (trapèzes)", M8.massageBalle));
+    s1Tasks.push(t("🧘", "Étirements des trapèzes", M8.etirTrapeze));
+  }
+  if (hasPelvis) {
+    s1Tasks.push(t("🧘", "Mobilité de hanche — Le papillon", M8.hanchePapillon));
+    s1Tasks.push(t("🧘", "Bassin — Antéversion", M8.bassinAntever));
+  }
+  if (hasSpine) {
+    s1Tasks.push(t("🧘", "Mobilité de colonne — Cobra", M8.colonneCobra));
+    s1Tasks.push(t("🧘", "Mobilité de colonne — Chat-vache", M8.colonneChatVache));
+  }
+  if (hasRotation) {
+    s1Tasks.push(t("🧘", "Rotation de tronc — 4 pattes", M8.rotTronc4pattes));
+    s1Tasks.push(t("🧘", "Rotation de tronc — Bâton", M8.rotTroncBaton));
+  }
+  if (hasLegs) {
+    s1Tasks.push(t("💪", "Activation des fessiers (squeeze glutes)", M8.fessiers));
+    s1Tasks.push(t("💪", "Ischios activation avec élastique", M8.ischiosActElast));
   }
 
-  // ═══════════════════════════════════
-  // SEMAINE 5 — PRÉSENTATION INDIVIDUELLE (si sélectionnée)
-  // ═══════════════════════════════════
-  if (hasPres) {
-    const presTasks = [];
-    if (isMP) {
-      presTasks.push(t('📹', 'Créer sa présentation individuelle', M6.presIndiv));
-      if (isNPC) presTasks.push(t('📹', 'Exemple : NPC I-walk', M6.presNPC));
-      else if (isWNBF) presTasks.push(t('📹', 'Exemple : T-walk (WNBF)', M6.presTwalk));
-      else presTasks.push(t('📹', 'Exemple : IFBB I-walk', M6.presIFBB));
-    } else if (isCPorBB) {
-      presTasks.push(t('📹', 'Créer sa présentation individuelle', M4.presIndiv));
-      const exLink = getExampleByLevel(lvl, M4.presExDeb, M4.presExInter, M4.presExAvance, M4.presExExpert);
-      const exLabel = lvl <= 1 ? 'Débutant' : lvl === 2 ? 'Intermédiaire' : lvl <= 4 ? 'Avancé' : 'Expert';
-      presTasks.push(t('📹', `Exemple présentation — ${exLabel}`, exLink));
-    }
-    presTasks.push(t('🎵', 'Choisir ta musique et caler les transitions', null));
-    presTasks.push(t('🏋️', 'Exercice : Chorégraphier ta présentation (60-90 sec)', null));
-    weeks.push({ phase: 'Création', title: 'Présentation Individuelle', tasks: presTasks });
-  }
-
-  // ═══════════════════════════════════
-  // SEMAINE 5-6 — ROUTINE LIBRE (si sélectionnée)
-  // ═══════════════════════════════════
-  if (hasRoutine) {
-    const routineTasks = [
-      t('📹', 'Créer sa routine libre — De A à Z', M4.routineLibre),
-    ];
-    const exLink = getExampleByLevel(lvl, M4.routineExDeb, M4.routineExInter, M4.routineExAvance, M4.routineExExpert);
-    const exLabel = lvl <= 1 ? 'Débutant' : lvl === 2 ? 'Intermédiaire' : lvl <= 4 ? 'Avancé' : 'Expert';
-    routineTasks.push(t('📹', `Exemple routine libre — ${exLabel}`, exLink));
-    routineTasks.push(t('🎵', 'Synchroniser musique + transitions + poses highlight', null));
-    routineTasks.push(t('🏋️', 'Exercice : Chorégraphier ta routine (60-90 sec)', null));
-    weeks.push({ phase: 'Création', title: 'Routine Libre', tasks: routineTasks });
-  }
-
-  // ═══════════════════════════════════
-  // MOBILITÉ & ACTIVATION (Module 8)
-  // ═══════════════════════════════════
-  if (hasMobility || hasShoulderPain || hasDorsaux || hasRotation || hasQuads || hasIschios || hasFessiers || hasBackIssue) {
-    const mobTasks = [
-      t('📹', 'Introduction — Mobilité & Activation', M8.intro),
-      t('📹', 'Échauffement posing sessions', M8.echauffement),
-    ];
-    if (hasMobility) {
-      mobTasks.push(t('🧘', 'Mobilité de hanche — Le papillon', M8.hanchePapillon));
-      mobTasks.push(t('🧘', 'Mobilité de hanche — Howard lunge stretch', M8.hancheHoward));
-      mobTasks.push(t('🧘', 'Bassin — Antéversion', M8.bassinAntever));
-      mobTasks.push(t('🧘', 'Mobilité de colonne — Cobra', M8.colonneCobra));
-      mobTasks.push(t('🧘', 'Mobilité de colonne — Chat-vache', M8.colonneChatVache));
-    }
-    if (hasRotation || hasSideChestIssue || hasSideRelaxIssue) {
-      mobTasks.push(t('🧘', 'Rotation de tronc — 4 pattes', M8.rotTronc4pattes));
-      mobTasks.push(t('🧘', 'Rotation de tronc — Bâton', M8.rotTroncBaton));
-    }
-    if (hasDorsaux || hasBackIssue) {
-      mobTasks.push(t('🧘', 'Protraction omoplates — Horizontale', M8.protractionH));
-      mobTasks.push(t('🧘', 'Protraction omoplates — Verticale rouleau', M8.protractionV));
-      mobTasks.push(t('🧘', 'Massage avec rouleau', M8.massageRouleau));
-    }
-    if (hasShoulderPain) {
-      mobTasks.push(t('🧘', 'Massage avec balle (trapèzes)', M8.massageBalle));
-      mobTasks.push(t('🧘', 'Étirements des trapèzes', M8.etirTrapeze));
-      mobTasks.push(t('🧘', 'Rotation interne épaule (élastique)', M8.rotIntElast));
-      mobTasks.push(t('🧘', 'Rotation externe épaule (élastique)', M8.rotExtElast));
-    }
-    if (hasQuads) {
-      mobTasks.push(t('💪', 'Quads activation avec élastique', M8.quadsActElast));
-    }
-    if (hasIschios || hasBackIssue) {
-      mobTasks.push(t('💪', 'Ischios activation avec élastique', M8.ischiosActElast));
-      mobTasks.push(t('💪', 'Ischios activation allongé', M8.ischiosActAllonge));
-    }
-    if (hasFessiers || hasBackIssue) {
-      mobTasks.push(t('💪', 'Activation des fessiers (squeeze glutes)', M8.fessiers));
-    }
-    if (hasDorsaux) {
-      mobTasks.push(t('💪', 'Activation des grands ronds', M8.grandsRonds));
-    }
-    weeks.push({ phase: 'Mobilité', title: 'Module 8 — Mobilité & Activation', tasks: mobTasks });
-  }
-
-  // ═══════════════════════════════════
-  // VACUUM (Module 9) — si Classic Physique ou problème vacuum
-  // ═══════════════════════════════════
-  if (hasVacuum || isCP) {
-    const vacTasks = [
-      t('📹', 'Introduction — Module Vacuum', M9.intro),
-      t('📹', 'Tout savoir sur le vacuum', M9.toutSavoir),
-      t('🏋️', 'Level 1 — Vacuum quadrupède statique', M9.statL1),
-      t('🏋️', 'Level 2 — Vacuum allongé statique', M9.statL2),
-      t('🏋️', 'Level 3 — Vacuum penché statique', M9.statL3),
-      t('🏋️', 'Level 4 — Vacuum sur pose statique', M9.statL4),
-    ];
-    if (lvl >= 2) {
-      vacTasks.push(t('🏋️', 'Level 5 — Vacuum penché dynamique', M9.dynL5));
-      vacTasks.push(t('🏋️', 'Level 6 — Vacuum sur pose dynamique', M9.dynL6));
-    }
-    weeks.push({ phase: 'Vacuum', title: 'Module 9 — Vacuum', tasks: vacTasks });
-  }
-
-  // ═══════════════════════════════════
-  // ROUND D'ENDURANCE
-  // ═══════════════════════════════════
-  if (!isNonCompet) {
-    const endTasks = [];
-    if (isBB) endTasks.push(t('📹', 'Round d\'endurance — Bodybuilding', M4.endurBB));
-    else if (isCP && isWNBF) endTasks.push(t('📹', 'Round d\'endurance — Classic Physique (WNBF)', M4.endurCPwnbf));
-    else if (isCP) endTasks.push(t('📹', 'Round d\'endurance — Classic Physique', M4.endurCP));
-    else if (isMP && isNPC) endTasks.push(t('📹', 'Round d\'endurance — NPC', M6.endurNPC));
-    else if (isMP) endTasks.push(t('📹', 'Round d\'endurance — IFBB/WNBF', M6.endurIFBB));
-
-    endTasks.push(t('🏋️', 'Exercice : Run-through complet toutes poses minuté', null));
-    endTasks.push(t('📐', 'Auto-filmage : Analyser endurance et tenue des poses', null));
-
-    weeks.push({ phase: 'Performance', title: 'Round d\'Endurance', tasks: endTasks });
-  }
-
-  // ═══════════════════════════════════
-  // THE CLASSIC CLASS (Module 5) — CP/BB, après 30j
-  // ═══════════════════════════════════
-  if (isCPorBB && lvl >= 2) {
-    weeks.push({
-      phase: 'Avancé',
-      title: 'Module 5 — The Classic Class (Level 3)',
-      tasks: [
-        t('📹', 'Introduction — The Classic Class', M5.intro),
-        t('🏋️', 'Poses artistiques avancées, placements au sol, variantes haut du corps', null),
-        t('⚠️', 'Module disponible après 30 jours d\'adhésion au Skool', null),
-      ]
-    });
-  }
-
-  // ═══════════════════════════════════
-  // COMPÉTITION (Module 7) — pour compétiteurs
-  // ═══════════════════════════════════
-  if (!isNonCompet) {
-    const compTasks = [
-      t('📹', 'Introduction — Compétition', M7.intro),
-      t('📹', 'Le déroulement d\'une compétition', M7.deroulement),
-      t('📹', 'Attitude scénique', M7.attitude),
-      t('📹', 'La respiration sur scène', M7.respiration),
-      t('📹', 'Le tan', M7.tan),
-      t('📹', 'Les phases cachées d\'une prép', M7.phasesCachees),
-      t('📹', 'Comment pumper (congestionner)', M7.pumpComment),
-      t('📹', 'Routine pump backstage', M7.pumpRoutine),
-    ];
-
-    // ── Federation-specific regulation ──
-    const fedLinks = FED_LINKS[fed];
-    if (fedLinks) {
-      compTasks.push(t('📋', `Présentation fédération — ${fed}`, fedLinks.pres));
-      const catKey = isMP ? 'mp' : isCP ? 'cp' : 'bb';
-      if (fedLinks[catKey]) {
-        compTasks.push(t('📋', `Règlement ${cat} — ${fed}`, fedLinks[catKey]));
-      }
-    }
-
-    weeks.push({ phase: 'Compétition', title: 'Module 7 — Compétition (Level 4)', tasks: compTasks });
-  }
-
-  // ═══════════════════════════════════
-  // CORRECTIONS QUOTIDIENNES & RESSOURCES
-  // ═══════════════════════════════════
-  weeks.push({
-    phase: 'Communauté',
-    title: 'Corrections Quotidiennes & Ressources',
-    tasks: [
-      t('📹', 'Corrections quotidiennes — Poster tes poses pour feedback', M10.corrections),
-      t('📓', 'Posing Note — Carnet de suivi de tes séances', M11.posingNote),
-      t('🤝', 'Les partenariats Posing Empire (codes promo)', M11.partenariats),
-    ]
-  });
-
-  // ═══════════════════════════════════
-  // ACCOMPAGNEMENT 1:1 (Module 12)
-  // ═══════════════════════════════════
+  // 6. 1:1 Coaching vs Calendly Discovery
   if (isAccompagnement) {
-    weeks.push({
-      phase: 'Accompagnement',
-      title: 'Module 12 — Accompagnement 1:1',
-      tasks: [
-        t('📹', 'Le mindset de winner 🏆', M12.mindset),
-        t('📹', 'Onboarding accompagnement', M12.onboarding),
-        t('📋', 'Règlement accompagnement', M12.reglement),
-        t('📹', 'Préparer notre séance de coaching', M12.preparerSeance),
-        t('📹', 'Bien faire ses bilans', M12.bilans),
-        t('📹', 'Le document de suivi', M12.docSuivi),
-        t('🤝', 'Mise en relation (juges & organisateurs)', M12.miseEnRelation),
-      ]
-    });
+    s1Tasks.push(t("📹", "Onboarding accompagnement 1:1", M12.onboarding));
+    s1Tasks.push(t("📋", "Règlement de l'accompagnement", M12.reglement));
+    s1Tasks.push(t("📹", "Bien faire ses bilans", M12.bilans));
   } else {
-    weeks.push({
-      phase: 'Accompagnement',
-      title: 'Passer au niveau supérieur ?',
-      tasks: [
-        t('🚀', 'Découvre l\'accompagnement 1:1 avec Manaël', CALENDLY_DECOUVERTE),
-        t('📞', 'Réserve ton appel de découverte gratuit', CALENDLY_DECOUVERTE),
-      ]
-    });
+    s1Tasks.push(t("🚀", "Découvrir l'accompagnement 1:1 avec Manaël", CALENDLY_DECOUVERTE));
+    s1Tasks.push(t("📞", "Réserfon appel de découverte gratuit", CALENDLY_DECOUVERTE));
   }
 
-  // ═══════════════════════════════════
-  // BILAN HEBDOMADAIRE (Module 3)
-  // ═══════════════════════════════════
-  weeks.push({
-    phase: 'Suivi',
-    title: 'Module 3 — Bilan Hebdomadaire',
-    tasks: [
-      t('📋', 'Remplis ton bilan hebdomadaire chaque semaine', `${SKOOL_BASE}/b7c4b94e?md=45bd1c69cb85435bbe2c7ae108ad8812`),
-      t('📐', 'Analyse tes progrès et ajuste ta roadmap', null),
-      t('🏆', 'Tu es sur la bonne voie — continue !', null),
-    ]
+  // Wait, let's fix typo to "Réserver ton appel de découverte gratuit"
+  s1Tasks.forEach(task => {
+    if (task.text.includes("Réserfon")) {
+      task.text = "Réserver ton appel de découverte gratuit";
+    }
   });
+
+  weeks.push({
+    phase: "Fondations",
+    title: "Ton Point de Départ & Fondations",
+    description: "Vidéos d'onboarding, mindset, vocabulaire de base et mise en place de ton set up de posing.",
+    tasks: s1Tasks
+  });
+
+  // Weeks 2 to 12
+  if (isCPorBB) {
+    const isNPC = fed === "NPC";
+    weeks.push(
+      { phase: "Catégorie", title: "Vacuum & Quarts de tour", description: "Apprentissage du Vacuum et travail de la sangle abdominale. Maîtrise des quarts de tour en placement symétrique et asymétrique. Mobilité des épaules si nécessaire.", tasks: [] },
+      { phase: "Catégorie", title: "Poses selon fédération", description: "Étude et pratique des poses obligatoires (Mandatories) selon les règlements de ta fédération (FDB, Lat Spread, Side Chest...), mobilité ciblée et poursuite du vacuum.", tasks: [] },
+      { phase: "Catégorie", title: "Continuation des mandatories", description: "Continuation de l'apprentissage et consolidation des poses imposées de ta catégorie face au miroir.", tasks: [] },
+      { phase: "Catégorie", title: "Transitions quarts de tour", description: "Apprentissage des transitions fluides entre les quarts de tour.", tasks: [] },
+      { phase: "Catégorie", title: "Transitions des mandatories", description: "Travail des transitions complexes entre les poses obligatoires (Mandatories).", tasks: [] },
+      { 
+        phase: "Présentation", 
+        title: isNPC ? "Présentation individuelle (NPC)" : "Consolidation des acquis", 
+        description: isNPC 
+          ? "Apprentissage de ton entrée de présentation individuelle en scène (I-walk/T-walk NPC)." 
+          : "Perfectionnement et consolidation de tes quarts de tour et de tes poses imposées. Les fédérations comme WNBF ou IFBB ne requérant pas de présentation individuelle à cette étape, nous mettons l'accent sur la tenue des poses.", 
+        tasks: [] 
+      },
+      { phase: "Routine", title: "Routine libre & The Classic Class", description: "Création de ta routine libre et accès aux contenus avancés artistiques du module The Classic Class.", tasks: [] },
+      { phase: "Routine", title: "Optimisation de la routine libre", description: "Optimisation du rythme, choix de la musique et synchronisation avec les transitions.", tasks: [] },
+      { phase: "Technique", title: "Optimisation des poses", description: "Amélioration de la fluidité générale et corrections individuelles des poses clés via les corrections de groupe.", tasks: [] },
+      { phase: "Performance", title: "Optimisation des transitions", description: "Pratique intensive des enchaînements, micro-transitions et endurance de pose.", tasks: [] },
+      { phase: "Scène", title: "Finalisation routine & présentation", description: "Simulation de passage sur scène, gestion du stress, de la respiration et de l'attitude.", tasks: [] }
+    );
+  } else if (isMP) {
+    const isWNBF = fed === "WNBF";
+    const isIFBB = fed === "IFBB";
+    const isNPC = fed === "NPC";
+    const presTitle = isNPC ? "Présentation NPC (I-walk)" : isWNBF ? "Présentation WNBF (T-walk)" : isIFBB ? "Présentation IFBB (I-walk)" : "Présentation individuelle";
+    const presDesc = isNPC 
+      ? "Apprentissage de l'I-walk spécifique au règlement Men's Physique NPC." 
+      : isWNBF 
+      ? "Apprentissage de la T-walk spécifique au règlement Men's Physique WNBF." 
+      : isIFBB 
+      ? "Apprentissage de l'I-walk spécifique au règlement Men's Physique IFBB." 
+      : "Apprentissage de la marche scénique (I-walk/T-walk) adaptée au règlement de ta fédération.";
+
+    weeks.push(
+      { phase: "Catégorie", title: "Poses selon fédération", description: "Apprentissage et perfectionnement de la Front Pose et de la Back Pose (quarts de tour ou placement front/back uniquement selon le règlement de ta fédération).", tasks: [] },
+      { phase: "Catégorie", title: "Transitions selon fédération", description: "Travail sur les transitions et la fluidité des rotations adaptées au règlement de ta fédération.", tasks: [] },
+      { phase: "Présentation", title: presTitle, description: presDesc, tasks: [] },
+      { phase: "Présence", title: "Présence scénique", description: "Développement du charisme, de l'attitude, du regard et du sourire face aux juges (module Compétition) et optimisation via les séances de groupe.", tasks: [] },
+      { phase: "Technique", title: "Optimisation des poses", description: "Ajustement de la hauteur des bras, de l'ouverture du dos et de la cambrure.", tasks: [] },
+      { phase: "Technique", title: "Enchaînements", description: "Enchaînement rapide des poses et des transitions sans perte de contrôle de la sangle abdominale.", tasks: [] },
+      { phase: "Performance", title: "Endurance", description: "Tenue des poses sous tension pour simuler les comparaisons de scène prolongées.", tasks: [] },
+      { phase: "Performance", title: "Simulation", description: "Simulations de line-up complets et de call-outs avec des variations de rythme.", tasks: [] },
+      { phase: "Technique", title: "Ajustements fins", description: "Corrections individualisées sur les détails de posture et de placement des mains/pieds.", tasks: [] },
+      { phase: "Logistique", title: "Logistique/Tan", description: "Préparation logistique pour le jour J, gestion du tan et de la congestion (pump) backstage.", tasks: [] },
+      { phase: "Scène", title: "Finalisation & plan long terme", description: "Répétitions finales et définition de la stratégie post-compétition.", tasks: [] }
+    );
+  } else if (isNonCompet) {
+    weeks.push(
+      { phase: "Bien-être", title: "Vacuum & Posture", description: "Travail quotidien de la sangle abdominale et développement d'une posture fière.", tasks: [] },
+      { phase: "Bien-être", title: "Ouverture de dos", description: "Exercices de protraction des omoplates et apprentissage de l'ouverture des dorsaux.", tasks: [] },
+      { phase: "Symétrie", title: "Symétrie quotidienne", description: "Correction des déséquilibres posturaux et des habitudes asymétriques du quotidien.", tasks: [] },
+      { phase: "Mobilité", title: "Mobilité hanches/bassin", description: "Assouplissement du bassin et amélioration de l'antéversion/rétroversion.", tasks: [] },
+      { phase: "Mobilité", title: "Mobilité épaules", description: "Routine d'étirement et d'activation pour libérer la raideur des épaules.", tasks: [] },
+      { phase: "Flow", title: "Transitions douces", description: "Travail des transitions fluides entre postures esthétiques.", tasks: [] },
+      { phase: "Esthétique", title: "Poses esthétiques personnelles", description: "Choix et apprentissage des poses mettant le plus en valeur ton physique.", tasks: [] },
+      { phase: "Flow", title: "Rythme & Flow", description: "Pratique rythmée avec contrôle respiratoire et mouvements harmonieux.", tasks: [] },
+      { phase: "Maintien", title: "Optimisation posture", description: "Consolidation de l'ouverture thoracique et du maintien.", tasks: [] },
+      { phase: "Maintien", title: "Endurance de pose", description: "Travail d'endurance musculaire sur tes poses favorites.", tasks: [] },
+      { phase: "Bilan", title: "Bilan & Shooting", description: "Finalisation de tes enchaînements et préparation de ton shooting de bilan (3 mois).", tasks: [] }
+    );
+  } else {
+    weeks.push(
+      { phase: "Catégorie", title: "Poses de base", description: "Apprentissage des poses imposées de ta catégorie.", tasks: [] },
+      { phase: "Catégorie", title: "Transitions", description: "Fluidité des enchaînements entre les poses.", tasks: [] },
+      { phase: "Présentation", title: "Présentation", description: "Marche, entrée et sortie de scène selon les règlements.", tasks: [] },
+      { phase: "Présence", title: "Présence scénique", description: "Attitude face aux juges, regard et assurance.", tasks: [] },
+      { phase: "Technique", title: "Optimisation technique", description: "Amélioration des lignes et ajustement des placements.", tasks: [] },
+      { phase: "Performance", title: "Endurance de pose", description: "Répétitions des enchaînements sous fatigue.", tasks: [] },
+      { phase: "Routine", title: "Routine/Chorégraphie", description: "Création de ta routine de passage.", tasks: [] },
+      { phase: "Technique", title: "Perfectionnement", description: "Correction des points faibles techniques.", tasks: [] },
+      { phase: "Technique", title: "Gestion sangle abdominale", description: "Maintien du contrôle abdominal sous tension.", tasks: [] },
+      { phase: "Logistique", title: "Backstage & Tan", description: "Stratégie de congestion et logistique du jour J.", tasks: [] },
+      { phase: "Scène", title: "Simulation scène", description: "Répetition finale en conditions réelles.", tasks: [] }
+    );
+  }
 
   return weeks;
 }
