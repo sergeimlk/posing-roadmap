@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 
@@ -83,6 +83,17 @@ export default function FormScreen({ onSubmit }) {
   const [shakeField, setShakeField] = useState(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [showLegalModal, setShowLegalModal] = useState(null); // 'cgu' | 'rgpd' | null
+
+  useEffect(() => {
+    if (!showLegalModal) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setShowLegalModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showLegalModal]);
 
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -239,6 +250,7 @@ export default function FormScreen({ onSubmit }) {
               name="fullname"
               placeholder="Ex: Manaël Dupont"
               required
+              autocomplete="name"
               value={formData.fullname}
               onChange={(e) => updateField('fullname', e.target.value)}
             />
@@ -285,6 +297,7 @@ export default function FormScreen({ onSubmit }) {
                   <input
                     type="text"
                     placeholder="Précise ta catégorie..."
+                    aria-label="Précise ta catégorie"
                     value={formData.categoryOther}
                     onChange={(e) => updateField('categoryOther', e.target.value)}
                   />
@@ -383,6 +396,7 @@ export default function FormScreen({ onSubmit }) {
                       <input
                         type="text"
                         placeholder="Précise ta fédération / compétition..."
+                        aria-label="Précise ta fédération ou compétition"
                         value={formData.federationOther}
                         onChange={(e) => updateField('federationOther', e.target.value)}
                       />
@@ -648,7 +662,7 @@ export default function FormScreen({ onSubmit }) {
                 </span>
               </span>
               <span className="privacy-checkbox-text">
-                J'accepte les <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('cgu')}>CGU</button> et la <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('rgpd')}>Politique de Confidentialité (RGPD)</button> de Posing Empire. <span className="required">*</span>
+                J'accepte les <button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('cgu'); }}>CGU</button> et la <button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('rgpd'); }}>Politique de Confidentialité (RGPD)</button> de Posing Empire. <span className="required">*</span>
               </span>
             </label>
           </motion.div>
@@ -684,6 +698,9 @@ export default function FormScreen({ onSubmit }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowLegalModal(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
           >
             <motion.div
               className="legal-modal-card"
@@ -694,8 +711,12 @@ export default function FormScreen({ onSubmit }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="legal-modal-header">
-                <h3>{showLegalModal === 'cgu' ? "Conditions Générales d'Utilisation" : "Politique de Confidentialité (RGPD)"}</h3>
-                <button className="legal-modal-close" onClick={() => setShowLegalModal(null)}>
+                <h3 id="modal-title">{showLegalModal === 'cgu' ? "Conditions Générales d'Utilisation" : "Politique de Confidentialité (RGPD)"}</h3>
+                <button
+                  className="legal-modal-close"
+                  onClick={() => setShowLegalModal(null)}
+                  aria-label="Fermer la modal"
+                >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
