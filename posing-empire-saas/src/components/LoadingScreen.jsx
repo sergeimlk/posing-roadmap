@@ -2,13 +2,20 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 
-const STEPS = [
+const DEFAULT_STEPS = [
   'Analyse de ton profil...',
   'Sélection des modules adaptés...',
   'Création de ta roadmap personnalisée...',
 ];
 
-export default function LoadingScreen({ onComplete, formData }) {
+const BILAN_STEPS = [
+  'Analyse de ton bilan hebdomadaire...',
+  'Sélection des exercices et vidéos adaptés...',
+  'Génération de ta roadmap personnalisée...',
+];
+
+export default function LoadingScreen({ onComplete, formData, loadingText }) {
+  const STEPS = loadingText ? BILAN_STEPS : DEFAULT_STEPS;
   const [currentStep, setCurrentStep] = useState(-1);
   const [barWidth, setBarWidth] = useState(0);
 
