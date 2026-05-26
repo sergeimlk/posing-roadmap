@@ -8,7 +8,6 @@ const LEVEL_LABELS = ['Débutant total', 'Novice', 'Intermédiaire', 'Confirmé'
 const NEEDS_LABELS = {
   routine_libre: 'Routine Libre',
   presentation_individuelle: 'Présentation Individuelle',
-  accompagnement_1_1: 'Accompagnement 1:1',
 };
 
 function escHtml(str) {
@@ -122,12 +121,12 @@ export default function RoadmapScreen({ data, onRestart }) {
               <span className="info-value">{dateStr}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Catégorie</span>
-              <span className="info-value">{data.category}</span>
+              <span className="info-label">Catégories</span>
+              <span className="info-value">{(data.categories && data.categories.length > 0) ? data.categories.join(' · ') : data.category}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Fédération</span>
-              <span className="info-value">{data.federation}</span>
+              <span className="info-label">Fédérations</span>
+              <span className="info-value">{(data.federations && data.federations.length > 0) ? data.federations.join(' · ') : data.federation}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Niveau</span>
@@ -152,7 +151,7 @@ export default function RoadmapScreen({ data, onRestart }) {
           </div>
 
           {/* TIMELINE */}
-          <div className="roadmap-section-title">📋 Ta Roadmap Semaine par Semaine</div>
+          <div className="roadmap-section-title">📋 Ta Roadmap sur 12 mois</div>
           <div className="roadmap-timeline">
             {timeline.map((item, i) => {
               const isFirst = i === 0;
@@ -170,7 +169,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                   <div className="timeline-left">
                     <div className={`timeline-number ${!isFirst ? 'locked-number' : ''}`}>
                       {isFirst ? (
-                        `S${String(i + 1).padStart(2, '0')}`
+                        `M${String(i + 1).padStart(2, '0')}`
                       ) : (
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: 'translateY(-1px)' }}>
                           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -210,7 +209,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                           )}
                         </div>
                         <div className="timeline-title" style={{ margin: 0 }}>
-                          {!isFirst ? `S${String(i + 1).padStart(2, '0')} — ${item.title}` : item.title}
+                          {!isFirst ? `M${String(i + 1).padStart(2, '0')} — ${item.title}` : `M01 — ${item.title}`}
                         </div>
                       </div>
                       
@@ -218,7 +217,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                         {/* Tooltip on Desktop */}
                         {!isFirst && isHovered && (
                           <div className="timeline-tooltip">
-                            Les prochaines roadmaps des prochaines semaines seront générées au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
+                            Les prochains blocs de ta roadmap seront générés au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
                           </div>
                         )}
                         <motion.span 
@@ -294,7 +293,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                                   <span className="locked-card-title">Contenu verrouillé</span>
                                 </div>
                                 <p className="locked-text">
-                                  Les prochaines roadmaps des prochaines semaines seront générées au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
+                                  Les prochains blocs de ta roadmap seront générés au fur et à mesure en fonction des blocages personnels et difficultés que tu rencontres au fil du coaching.
                                 </p>
                                 <div className="locked-card-footer">
                                   Bilan hebdomadaire requis

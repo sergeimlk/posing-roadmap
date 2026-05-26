@@ -249,24 +249,11 @@ const CALENDLY_DECOUVERTE = "https://calendly.com/posing-session-reservation/app
 // Helper: create a task with optional link
 function t(icon, text, link) {
   return { icon, text, link: link || null };
-}
-
-// Get level-appropriate example link for pres/routine
-function getExampleByLevel(lvl, deb, inter, avance, expert) {
-  if (lvl <= 1) return deb;
-  if (lvl === 2) return inter;
-  if (lvl <= 4) return avance;
-  return expert;
-}
-
-// ══════════════════════════════════════════════
-// MAIN EXPORT
-// ══════════════════════════════════════════════
-export function buildTimeline(data) {
+}export function buildTimeline(data) {
   const weeks = [];
-  const cat = data.category;
-  const fed = data.federation;
-  const isAccompagnement = data.needs.includes("accompagnement_1_1");
+  const cat = data.primaryCategory || (data.categories && data.categories[0]) || 'Non compétiteur';
+  const fed = data.primaryFederation || (data.federations && data.federations[0]) || 'Aucune';
+  const isAccompagnement = data.needs && data.needs.includes("accompagnement_1_1");
   const problems = (data.problems || "").toLowerCase();
 
   const isMP = cat === "Men's Physique";
@@ -276,7 +263,7 @@ export function buildTimeline(data) {
   const isCPorBB = isCP || isBB;
 
   // ═══════════════════════════════════
-  // SEMAINE 1 — TON POINT DE DÉPART & FONDATIONS
+  // SEMAINE 1 (MOIS 1) — TON POINT DE DÉPART & FONDATIONS
   // ═══════════════════════════════════
   const s1Tasks = [];
 
@@ -285,8 +272,10 @@ export function buildTimeline(data) {
     s1Tasks.push(t("👙", "Slip de Posing / Tenue de Scène - Les choix obligatoires", M4.tenueScene));
   }
 
-  // 2. Mindset & Prés  // 3. Fondations
-  s1Tasks.push(t("📖", "Le vocabulaire du poseur", M2.vocabulaire));
+  // 2. Skool presentation
+  s1Tasks.push(t("👋", "Te présenter dans le groupe Skool (post de présentation avec photo et objectifs)", "https://www.skool.com/posing-empire-groupe-prive-6566"));
+
+  // 3. Mindset & Fondations
   s1Tasks.push(t("📹", "La méthodologie pour poser", M2.methodologie));
   s1Tasks.push(t("📹", "Organiser sa pratique", M2.organiser));
   s1Tasks.push(t("📹", "Créer son set up", M2.setup));
@@ -297,18 +286,26 @@ export function buildTimeline(data) {
     s1Tasks.push(t("📹", "Choisir sa fédération", M2.choisirFed));
     s1Tasks.push(t("📹", "Choisir sa catégorie - Introduction", M2.choisirCatIntro));
     s1Tasks.push(t("📹", "Choisir sa catégorie - Hommes", M2.choisirCatHomme));
-  } else if (fed && fed !== "Aucune" && fed !== "Autre" && FED_LINKS[fed]) {
-    const fData = FED_LINKS[fed];
-    if (fData.pres) {
-      s1Tasks.push(t("📹", "Fédération " + fed + " — Présentation & Règlements", fData.pres));
-    }
-    if (isMP && fData.mp) {
-      s1Tasks.push(t("📖", "Règlement Men's Physique — " + fed, fData.mp));
-    } else if (isCP && fData.cp) {
-      s1Tasks.push(t("📖", "Règlement Classic Physique — " + fed, fData.cp));
-    } else if (isBB && fData.bb) {
-      s1Tasks.push(t("📖", "Règlement Bodybuilding — " + fed, fData.bb));
-    }
+  } else {
+    // Loop over all selected federations for rule links
+    const selectedFeds = data.federations || (data.federation ? [data.federation] : []);
+    const activeFeds = selectedFeds.filter(f => f && f !== "Aucune" && f !== "Autre");
+
+    activeFeds.slice(0, 3).forEach(currentFed => {
+      if (FED_LINKS[currentFed]) {
+        const fData = FED_LINKS[currentFed];
+        if (fData.pres) {
+          s1Tasks.push(t("📹", "Fédération " + currentFed + " — Présentation & Règlements", fData.pres));
+        }
+        if (isMP && fData.mp) {
+          s1Tasks.push(t("📖", "Règlement Men's Physique — " + currentFed, fData.mp));
+        } else if (isCP && fData.cp) {
+          s1Tasks.push(t("📖", "Règlement Classic Physique — " + currentFed, fData.cp));
+        } else if (isBB && fData.bb) {
+          s1Tasks.push(t("📖", "Règlement Bodybuilding — " + currentFed, fData.bb));
+        }
+      }
+    });
   }
 
   // 5. Physical Difficulties & Category Foundations
@@ -358,7 +355,7 @@ export function buildTimeline(data) {
     s1Tasks.push(t("💪", "Ischios activation avec élastique", M8.ischiosActElast));
   }
 
-  // 6. 1:1 Coaching vs Calendly Discovery
+  // 6. 1:1 Coaching / Discover
   if (isAccompagnement) {
     s1Tasks.push(t("📹", "Onboarding accompagnement 1:1", M12.onboarding));
     s1Tasks.push(t("📋", "Règlement de l'accompagnement", M12.reglement));
@@ -368,7 +365,7 @@ export function buildTimeline(data) {
     s1Tasks.push(t("📞", "Réserfon appel de découverte gratuit", CALENDLY_DECOUVERTE));
   }
 
-  // Wait, let's fix typo to "Réserver ton appel de découverte gratuit"
+  // Fix typo to "Réserver ton appel de découverte gratuit"
   s1Tasks.forEach(task => {
     if (task.text.includes("Réserfon")) {
       task.text = "Réserver ton appel de découverte gratuit";
@@ -378,16 +375,16 @@ export function buildTimeline(data) {
   weeks.push({
     phase: "Fondations",
     title: "Ton Point de Départ & Fondations",
-    description: "Vidéos d'onboarding, mindset, vocabulaire de base et mise en place de ton set up de posing.",
+    description: "Vidéos d'onboarding, mindset, routine et mise en place de ton set up de posing.",
     tasks: s1Tasks
   });
 
-  // Weeks 2 to 12
+  // Mois 2 to 12
   if (isCPorBB) {
     const isNPC = fed === "NPC";
     weeks.push(
-      { phase: "Catégorie", title: "Vacuum & Quarts de tour", description: "Apprentissage du Vacuum et travail de la sangle abdominale. Maîtrise des quarts de tour en placement symétrique et asymétrique. Mobilité des épaules si nécessaire.", tasks: [] },
-      { phase: "Catégorie", title: "Poses selon fédération", description: "Étude et pratique des poses obligatoires (Mandatories) selon les règlements de ta fédération (FDB, Lat Spread, Side Chest...), mobilité ciblée et poursuite du vacuum.", tasks: [] },
+      { phase: "Catégorie", title: "Quarts de tour & placement du bas du corps", description: "Maîtrise des quarts de tour et du placement du bas du corps en position symétrique.", tasks: [] },
+      { phase: "Catégorie", title: "Mandatories (poses obligatoires)", description: "Étude et pratique des poses obligatoires de ta catégorie (front, side, back...) selon les règlements de ta fédération.", tasks: [] },
       { phase: "Catégorie", title: "Continuation des mandatories", description: "Continuation de l'apprentissage et consolidation des poses imposées de ta catégorie face au miroir.", tasks: [] },
       { phase: "Catégorie", title: "Transitions quarts de tour", description: "Apprentissage des transitions fluides entre les quarts de tour.", tasks: [] },
       { phase: "Catégorie", title: "Transitions des mandatories", description: "Travail des transitions complexes entre les poses obligatoires (Mandatories).", tasks: [] },

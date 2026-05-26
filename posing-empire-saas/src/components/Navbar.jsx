@@ -8,12 +8,16 @@ export default function Navbar() {
         </div>
         <div className="nav-right">
           <a
-            href="https://posingempire.vercel.app/"
+            href="/"
             className="nav-link"
-            target="_blank"
-            rel="noopener noreferrer"
           >
-            Site Principal
+            Roadmap Personnalisée
+          </a>
+          <a
+            href="/?mode=bilan"
+            className="nav-link"
+          >
+            Bilan Hebdomadaire
           </a>
           <a
             href="https://www.skool.com/posing-empire-groupe-prive-6566"

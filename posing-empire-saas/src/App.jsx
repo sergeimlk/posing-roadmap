@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from './components/Navbar';
-import SelectModeScreen from './components/SelectModeScreen';
 import FormScreen from './components/FormScreen';
 import LoadingScreen from './components/LoadingScreen';
 import RoadmapScreen from './components/RoadmapScreen';
@@ -13,9 +12,8 @@ function getInitialMode() {
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode');
     if (mode === 'bilan') return 'bilan-form';
-    if (mode === 'onboarding') return 'form';
   } catch { /* no-op */ }
-  return 'select';
+  return 'form';
 }
 
 export default function App() {
@@ -57,36 +55,15 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // ── Mode select ──
-  const handleModeSelect = useCallback((mode) => {
-    if (mode === 'onboarding') setCurrentScreen('form');
-    else if (mode === 'bilan') setCurrentScreen('bilan-form');
-  }, []);
-
-  const handleBackToSelect = useCallback(() => {
-    setFormData(null);
-    setBilanData(null);
-    setCurrentScreen('select');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  // ── Back to Onboarding (Clears URL query params) ──
+  const handleBackToOnboarding = useCallback(() => {
+    window.location.href = '/';
   }, []);
 
   return (
     <>
       <Navbar />
       <AnimatePresence mode="wait">
-        {/* ═══ MODE SELECT ═══ */}
-        {currentScreen === 'select' && (
-          <motion.div
-            key="select"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <SelectModeScreen onSelect={handleModeSelect} />
-          </motion.div>
-        )}
-
         {/* ═══ ONBOARDING FLOW ═══ */}
         {currentScreen === 'form' && (
           <motion.div
@@ -141,7 +118,7 @@ export default function App() {
           >
             <BilanFormScreen
               onSubmit={handleBilanSubmit}
-              onBack={handleBackToSelect}
+              onBack={handleBackToOnboarding}
             />
           </motion.div>
         )}
@@ -173,7 +150,7 @@ export default function App() {
             <BilanRoadmapScreen
               data={bilanData}
               onRestart={handleBilanRestart}
-              onBack={handleBackToSelect}
+              onBack={handleBackToOnboarding}
             />
           </motion.div>
         )}

@@ -48,10 +48,10 @@ const PHYSICAL_PROBLEMS = [
 ];
 
 const TIMES = [
-  { value: '15 min', label: '15 min' },
-  { value: '30 min', label: '30 min' },
-  { value: '45 min', label: '45 min' },
-  { value: '1h+', label: '1h+' },
+  { value: '5 min', label: '5 min' },
+  { value: '10 min', label: '10 min' },
+  { value: '15-30 min', label: '15-30 min' },
+  { value: '30+ min', label: '30+ min' },
 ];
 
 const LEVELS = [
@@ -66,9 +66,9 @@ const LEVELS = [
 export default function FormScreen({ onSubmit }) {
   const [formData, setFormData] = useState({
     fullname: '',
-    category: '',
+    categories: [],
     categoryOther: '',
-    federation: '',
+    federations: [],
     federationOther: '',
     stageIntent: '', // 'has_stage' | 'undecided' | 'no_stage'
     hasShorts: '', // 'yes' | 'no'
@@ -99,23 +99,55 @@ export default function FormScreen({ onSubmit }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  const handleCategoryChange = useCallback((val) => {
+  const handleCategoryToggle = useCallback((val) => {
     setFormData(prev => {
-      const next = { ...prev, category: val };
-      if (val !== 'Autre') {
+      let nextCategories = prev.categories || [];
+      if (val === 'Non compétiteur') {
+        nextCategories = ['Non compétiteur'];
+      } else {
+        nextCategories = nextCategories.filter(c => c !== 'Non compétiteur');
+        if (nextCategories.includes(val)) {
+          nextCategories = nextCategories.filter(c => c !== val);
+        } else {
+          if (nextCategories.length < 3) {
+            nextCategories = [...nextCategories, val];
+          } else {
+            return prev;
+          }
+        }
+      }
+
+      const next = { ...prev, categories: nextCategories };
+      if (!nextCategories.includes('Autre')) {
         next.categoryOther = '';
       }
 
-      if (val === 'Non compétiteur') {
+      if (nextCategories.includes('Non compétiteur') || nextCategories.length === 0) {
         next.stageIntent = 'no_stage';
-        next.federation = 'Aucune';
+        next.federations = ['Aucune'];
         next.hasShorts = 'yes';
       } else {
-        if (prev.category === 'Non compétiteur') {
+        if (prev.categories && prev.categories.includes('Non compétiteur')) {
           next.stageIntent = '';
-          next.federation = '';
+          next.federations = [];
           next.hasShorts = '';
         }
+      }
+      return next;
+    });
+  }, []);
+
+  const handleFederationToggle = useCallback((val) => {
+    setFormData(prev => {
+      let nextFeds = prev.federations || [];
+      if (nextFeds.includes(val)) {
+        nextFeds = nextFeds.filter(f => f !== val);
+      } else {
+        nextFeds = [...nextFeds, val];
+      }
+      const next = { ...prev, federations: nextFeds };
+      if (!nextFeds.includes('Autre')) {
+        next.federationOther = '';
       }
       return next;
     });
@@ -125,11 +157,11 @@ export default function FormScreen({ onSubmit }) {
     setFormData(prev => {
       const next = { ...prev, stageIntent: val };
       if (val === 'no_stage') {
-        next.federation = 'Aucune';
+        next.federations = ['Aucune'];
         next.hasShorts = 'yes';
       } else {
         if (prev.stageIntent === 'no_stage') {
-          next.federation = '';
+          next.federations = [];
           next.hasShorts = '';
         }
       }
@@ -159,18 +191,18 @@ export default function FormScreen({ onSubmit }) {
     e.preventDefault();
 
     // Validate required selectors
-    if (!formData.category) { triggerShake('category'); return; }
-    if (formData.category === 'Autre' && !formData.categoryOther.trim()) { triggerShake('categoryOther'); return; }
+    if (!formData.categories || formData.categories.length === 0) { triggerShake('category'); return; }
+    if (formData.categories.includes('Autre') && !formData.categoryOther.trim()) { triggerShake('categoryOther'); return; }
 
-    const isCompetitor = formData.category !== 'Non compétiteur';
+    const isCompetitor = !formData.categories.includes('Non compétiteur');
 
     if (isCompetitor) {
       if (!formData.stageIntent) { triggerShake('stageIntent'); return; }
 
       const needsFedAndShorts = formData.stageIntent !== 'no_stage';
       if (needsFedAndShorts) {
-        if (!formData.federation) { triggerShake('federation'); return; }
-        if (formData.federation === 'Autre' && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
+        if (!formData.federations || formData.federations.length === 0) { triggerShake('federation'); return; }
+        if (formData.federations.includes('Autre') && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
         if (!formData.hasShorts) { triggerShake('hasShorts'); return; }
       }
     }
@@ -179,16 +211,26 @@ export default function FormScreen({ onSubmit }) {
     if (!formData.time) { triggerShake('time'); return; }
     if (!consentAccepted) { triggerShake('consent'); return; }
 
+    const resolvedCategories = formData.categories.map(c => 
+      c === 'Autre' ? (formData.categoryOther.trim() || 'Autre') : c
+    );
+    const primaryCategory = resolvedCategories[0] || 'Non compétiteur';
+
+    const resolvedFederations = isCompetitor && formData.stageIntent !== 'no_stage'
+      ? formData.federations.map(f => f === 'Autre' ? (formData.federationOther.trim() || 'Autre') : f)
+      : ['Aucune'];
+    const primaryFederation = resolvedFederations[0] || 'Aucune';
+
     // Collect data
     const submissionData = {
       fullname: formData.fullname.trim(),
-      category: formData.category === 'Autre' ? (formData.categoryOther.trim() || 'Autre') : formData.category,
+      categories: resolvedCategories,
+      category: resolvedCategories.join(' · '),
+      primaryCategory,
       categoryOther: formData.categoryOther.trim(),
-      federation: formData.category === 'Non compétiteur' || formData.stageIntent === 'no_stage'
-        ? 'Aucune'
-        : (formData.federation === 'Autre'
-          ? (formData.federationOther.trim() || 'Autre')
-          : formData.federation),
+      federations: resolvedFederations,
+      federation: resolvedFederations.join(' · '),
+      primaryFederation,
       federationOther: formData.federationOther.trim(),
       stageIntent: formData.stageIntent,
       hasShorts: formData.hasShorts,
@@ -263,25 +305,28 @@ export default function FormScreen({ onSubmit }) {
             animate={shakeField === 'category' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label id="label-category">Catégorie <span className="required">*</span></label>
+            <label id="label-category">Catégories (Sélectionne jusqu'à 3) <span className="required">*</span></label>
             <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-category">
-              {CATEGORIES.map(cat => (
-                <motion.button
-                  key={cat.value}
-                  type="button"
-                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
-                  onClick={() => handleCategoryChange(cat.value)}
-                  aria-pressed={formData.category === cat.value}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
-                  <span>{cat.label}</span>
-                </motion.button>
-              ))}
+              {CATEGORIES.map(cat => {
+                const isSelected = formData.categories.includes(cat.value);
+                return (
+                  <motion.button
+                    key={cat.value}
+                    type="button"
+                    className={`selector-btn${isSelected ? ' selected' : ''}`}
+                    onClick={() => handleCategoryToggle(cat.value)}
+                    aria-pressed={isSelected}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
+                    <span>{cat.label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
             <AnimatePresence>
-              {formData.category === 'Autre' && (
+              {formData.categories.includes('Autre') && (
                 <motion.div
                   id="group-categoryOther"
                   initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
@@ -308,7 +353,7 @@ export default function FormScreen({ onSubmit }) {
 
           {/* Projet de scène / Compétition */}
           <AnimatePresence mode="wait">
-            {formData.category && formData.category !== 'Non compétiteur' && (
+            {formData.categories && formData.categories.length > 0 && !formData.categories.includes('Non compétiteur') && (
               <motion.div
                 className="form-group"
                 id="group-stageIntent"
@@ -345,7 +390,7 @@ export default function FormScreen({ onSubmit }) {
 
           {/* Fédération */}
           <AnimatePresence mode="wait">
-            {formData.category && formData.category !== 'Non compétiteur' && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
+            {formData.categories && formData.categories.length > 0 && !formData.categories.includes('Non compétiteur') && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
               <motion.div
                 className="form-group"
                 id="group-federation"
@@ -360,27 +405,27 @@ export default function FormScreen({ onSubmit }) {
                 transition={{ duration: 0.4 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               >
-                <label id="label-federation">Fédération <span className="required">*</span></label>
+                <label id="label-federation">Fédérations (Multi-sélection) <span className="required">*</span></label>
                 <div className="selector-grid selector-grid-fed" role="group" aria-labelledby="label-federation">
-                  {FEDERATIONS.map(fed => (
-                    <motion.button
-                      key={fed.value}
-                      type="button"
-                      className={`selector-btn selector-btn-sm${formData.federation === fed.value ? ' selected' : ''}`}
-                      onClick={() => {
-                        updateField('federation', fed.value);
-                        if (fed.value !== 'Autre') updateField('federationOther', '');
-                      }}
-                      aria-pressed={formData.federation === fed.value}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {fed.label}
-                    </motion.button>
-                  ))}
+                  {FEDERATIONS.map(fed => {
+                    const isSelected = formData.federations.includes(fed.value);
+                    return (
+                      <motion.button
+                        key={fed.value}
+                        type="button"
+                        className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
+                        onClick={() => handleFederationToggle(fed.value)}
+                        aria-pressed={isSelected}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {fed.label}
+                      </motion.button>
+                    );
+                  })}
                 </div>
                 <AnimatePresence>
-                  {formData.federation === 'Autre' && (
+                  {formData.federations.includes('Autre') && (
                     <motion.div
                       id="group-federationOther"
                       initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
@@ -409,7 +454,7 @@ export default function FormScreen({ onSubmit }) {
 
           {/* Tenue de scène */}
           <AnimatePresence mode="wait">
-            {formData.category && formData.category !== 'Non compétiteur' && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
+            {formData.categories && formData.categories.length > 0 && !formData.categories.includes('Non compétiteur') && formData.stageIntent && formData.stageIntent !== 'no_stage' && (
               <motion.div
                 className="form-group"
                 id="group-hasShorts"
@@ -494,7 +539,7 @@ export default function FormScreen({ onSubmit }) {
 
           {/* Difficultés physiques */}
           <div className="form-group">
-            <label id="label-selectedProblems">Difficultés ou limitations physiques (Coche toutes les options concernées) :</label>
+            <label id="label-selectedProblems">Difficultés ou limitations physiques (Coche toutes les options <span style={{ whiteSpace: 'nowrap' }}>concernées) :</span></label>
             <div className="problems-grid" role="group" aria-labelledby="label-selectedProblems">
               {PHYSICAL_PROBLEMS.map(prob => {
                 const isSelected = formData.selectedProblems.includes(prob.value);
@@ -604,26 +649,7 @@ export default function FormScreen({ onSubmit }) {
                   <span className="checkbox-desc">Entrée en scène et présentation solo personnalisée</span>
                 </span>
               </label>
-              <label className={`checkbox-card${formData.needs.includes('accompagnement_1_1') ? ' checked' : ''}`}>
-                <input
-                  type="checkbox"
-                  name="needs"
-                  value="accompagnement_1_1"
-                  checked={formData.needs.includes('accompagnement_1_1')}
-                  onChange={() => toggleNeed('accompagnement_1_1')}
-                />
-                <span className="checkbox-visual">
-                  <span className="check-icon">
-                    <svg viewBox="0 0 16 16" fill="none">
-                      <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                </span>
-                <span className="checkbox-content">
-                  <span className="checkbox-title">Accompagnement 1:1</span>
-                  <span className="checkbox-desc">Je suis membre de l'accompagnement premium de Manaël</span>
-                </span>
-              </label>
+              {/* Option Accompagnement 1:1 retirée */}
             </div>
           </div>
 

@@ -402,14 +402,23 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
           </motion.div>
 
           {/* Accompagnement 1:1 */}
-          <div className="form-group">
-            <label className="bilan-checkbox-label">
+          <div className="form-group" style={{ marginTop: '1rem' }}>
+            <label className="privacy-checkbox-card">
               <input
                 type="checkbox"
                 checked={formData.isAccompagnement}
                 onChange={(e) => updateField('isAccompagnement', e.target.checked)}
               />
-              <span className="bilan-checkbox-text">Je fais partie de l'accompagnement 1:1 avec Manaël</span>
+              <span className="checkbox-visual">
+                <span className="check-icon">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </span>
+              <span className="privacy-checkbox-text">
+                Je fais partie de l'accompagnement 1:1 avec Manaël
+              </span>
             </label>
           </div>
 
@@ -508,31 +517,41 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
           {/* Présentation individuelle */}
           <div className="form-group">
             <label htmlFor="bilan-presentationProgress">Avancement — Présentation individuelle</label>
-            <select
-              id="bilan-presentationProgress"
-              className="bilan-select"
-              value={formData.presentationProgress}
-              onChange={(e) => updateField('presentationProgress', e.target.value)}
-            >
-              {PROGRESS_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <div className="bilan-select-wrapper">
+              <select
+                id="bilan-presentationProgress"
+                className="bilan-select"
+                value={formData.presentationProgress}
+                onChange={(e) => updateField('presentationProgress', e.target.value)}
+              >
+                {PROGRESS_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <svg className="bilan-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
           </div>
 
           {/* Routine libre */}
           <div className="form-group">
             <label htmlFor="bilan-routineProgress">Avancement — Routine libre</label>
-            <select
-              id="bilan-routineProgress"
-              className="bilan-select"
-              value={formData.routineProgress}
-              onChange={(e) => updateField('routineProgress', e.target.value)}
-            >
-              {PROGRESS_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <div className="bilan-select-wrapper">
+              <select
+                id="bilan-routineProgress"
+                className="bilan-select"
+                value={formData.routineProgress}
+                onChange={(e) => updateField('routineProgress', e.target.value)}
+              >
+                {PROGRESS_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <svg className="bilan-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
           </div>
 
           {/* ═══ SECTION 4: Objectif ═══ */}

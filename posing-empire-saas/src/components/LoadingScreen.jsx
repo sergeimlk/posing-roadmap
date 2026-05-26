@@ -1,15 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
+import { polishTextWithAI } from '../utils/polishText';
 
 const DEFAULT_STEPS = [
   'Analyse de ton profil...',
+  'Optimisation de tes réponses par l\'IA...',
   'Sélection des modules adaptés...',
-  'Création de ta roadmap personnalisée...',
+  'Création de ta roadmap sur 12 mois...',
 ];
 
 const BILAN_STEPS = [
   'Analyse de ton bilan hebdomadaire...',
+  'Optimisation de tes réponses par l\'IA...',
   'Sélection des exercices et vidéos adaptés...',
   'Génération de ta roadmap personnalisée...',
 ];
@@ -18,31 +21,83 @@ export default function LoadingScreen({ onComplete, formData, loadingText }) {
   const STEPS = loadingText ? BILAN_STEPS : DEFAULT_STEPS;
   const [currentStep, setCurrentStep] = useState(-1);
   const [barWidth, setBarWidth] = useState(0);
+  const [processedData, setProcessedData] = useState(formData);
+  const dataRef = useRef(formData);
 
+  useEffect(() => {
+    dataRef.current = processedData;
+  }, [processedData]);
+
+  // Asynchronously polish the text fields when mounted
+  useEffect(() => {
+    let active = true;
+    async function performPolishing() {
+      const updated = { ...formData };
+      try {
+        if (!loadingText) {
+          // Onboarding fields
+          if (formData.objectives) {
+            updated.objectives = await polishTextWithAI(formData.objectives, 'objectives');
+          }
+          if (formData.problems) {
+            updated.problems = await polishTextWithAI(formData.problems, 'problems');
+          }
+        } else {
+          // Bilan fields
+          if (formData.workDoneDetails) {
+            updated.workDoneDetails = await polishTextWithAI(formData.workDoneDetails, 'workDoneDetails');
+          }
+          if (formData.difficultiesDetails) {
+            updated.difficultiesDetails = await polishTextWithAI(formData.difficultiesDetails, 'difficultiesDetails');
+          }
+          if (formData.mobilityDetails) {
+            updated.mobilityDetails = await polishTextWithAI(formData.mobilityDetails, 'mobilityDetails');
+          }
+          if (formData.nextWeekGoal) {
+            updated.nextWeekGoal = await polishTextWithAI(formData.nextWeekGoal, 'nextWeekGoal');
+          }
+        }
+      } catch (err) {
+        console.error('Error during loading screen text polishing:', err);
+      }
+      if (active) {
+        setProcessedData(updated);
+      }
+    }
+    performPolishing();
+    return () => { active = false; };
+  }, [formData, loadingText]);
+
+  // Timers to step through loading animation sequentially
   useEffect(() => {
     const timers = [];
 
     timers.push(setTimeout(() => {
       setCurrentStep(0);
-      setBarWidth(33);
+      setBarWidth(25);
     }, 600));
 
     timers.push(setTimeout(() => {
       setCurrentStep(1);
-      setBarWidth(66);
-    }, 1400));
+      setBarWidth(50);
+    }, 1300));
 
     timers.push(setTimeout(() => {
       setCurrentStep(2);
-      setBarWidth(100);
-    }, 2200));
+      setBarWidth(75);
+    }, 2000));
 
     timers.push(setTimeout(() => {
-      onComplete(formData);
-    }, 3000));
+      setCurrentStep(3);
+      setBarWidth(100);
+    }, 2700));
+
+    timers.push(setTimeout(() => {
+      onComplete(dataRef.current);
+    }, 3400));
 
     return () => timers.forEach(clearTimeout);
-  }, [onComplete, formData]);
+  }, [onComplete]);
 
   return (
     <main className="screen active">
