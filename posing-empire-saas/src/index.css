@@ -259,10 +259,10 @@ body {
 
 @media (max-width: 639px) {
   .nav-skool-btn {
-    width: 42px;
+    width: 80px;
     height: 42px;
     min-height: 42px;
-    border-radius: 50%;
+    border-radius: 9999px;
     padding: 0;
     background: rgba(18, 18, 18, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -270,6 +270,7 @@ body {
     align-items: center;
     justify-content: center;
     box-shadow: none;
+    text-transform: none !important;
   }
   
   .nav-skool-btn:hover,
@@ -288,9 +289,10 @@ body {
     display: flex;
     font-family: 'Outfit', 'Inter', sans-serif;
     font-weight: 900;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     letter-spacing: -0.04em;
     gap: 0.5px;
+    text-transform: none !important;
   }
   
   .skool-mobile-logo .s { color: #3b82f6; }
