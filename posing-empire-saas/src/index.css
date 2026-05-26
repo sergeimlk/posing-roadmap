@@ -2594,3 +2594,32 @@ select:focus-visible {
 .mode-card:hover {
   z-index: 100 !important;
 }
+
+/* ══════════════ REACTBITS SHINY TEXT ══════════════ */
+@keyframes shine-sweep {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.shiny-text {
+  background: linear-gradient(
+    120deg,
+    rgba(212, 168, 67, 0.3) 30%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(212, 168, 67, 0.3) 70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine-sweep 5s linear infinite;
+}
+
+.shiny-text.disabled {
+  background: none;
+  -webkit-text-fill-color: inherit;
+  animation: none;
+}

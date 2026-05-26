@@ -5,6 +5,7 @@ export default function Navbar() {
   // Add premium magnetic effect to navbar items on desktop
   const link1Ref = useMagnetic({ strength: 0.25, radius: 40 });
   const link2Ref = useMagnetic({ strength: 0.25, radius: 40 });
+  const link3Ref = useMagnetic({ strength: 0.25, radius: 40 });
   const ctaRef = useMagnetic({ strength: 0.25, radius: 40 });
 
   return (
@@ -56,6 +57,23 @@ export default function Navbar() {
               </svg>
             </span>
             <span className="nav-link-text">Bilan Hebdomadaire</span>
+          </a>
+
+          {/* Labo d'Effets (Sandbox) */}
+          <a
+            ref={link3Ref}
+            href="/?mode=sandbox"
+            className="nav-circle-link nav-link-sandbox"
+            title="Labo d'Effets"
+          >
+            <span className="nav-link-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16.3 11.3L12 3H12L7.7 11.3a6 6 0 1 0 8.6 0z" />
+                <path d="M9 15h6" />
+                <path d="M8 3h8" />
+              </svg>
+            </span>
+            <span className="nav-link-text">Labo d'Effets</span>
           </a>
 
           {/* Rejoindre Skool */}
