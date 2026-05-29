@@ -184,9 +184,21 @@ body {
   display: none;
 }
 
+.nav-dock-container {
+  display: none;
+}
+
 @media (min-width: 640px) {
   .nav-circle-link {
     display: block;
+  }
+  .mobile-only-link {
+    display: none !important;
+  }
+  .nav-dock-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -365,18 +377,21 @@ body {
   height: 6px;
   border-radius: 50%;
   background: #D4A843;
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
 @keyframes pulse-glow {
-
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.5);
+    transform: scale(1);
+    background: #D4A843;
+    box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.7);
   }
 
   50% {
-    box-shadow: 0 0 0 6px rgba(212, 168, 67, 0);
+    transform: scale(1.4);
+    background: #4ADE80;
+    box-shadow: 0 0 0 8px rgba(74, 222, 128, 0);
   }
 }
 

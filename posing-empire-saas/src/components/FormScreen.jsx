@@ -64,53 +64,6 @@ const LEVELS = [
   { value: 4, label: '4 – Expert' },
 ];
 
-const MORPHOLOGIES = [
-  {
-    value: 'X',
-    label: 'X (Sablier)',
-    desc: 'Épaules et hanches alignées, taille fine',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <path d="M10 12 L30 12 L12 48 L28 48 Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="12" y1="30" x2="28" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  },
-  {
-    value: 'H',
-    label: 'H (Rectangle)',
-    desc: 'Épaules, taille et hanches alignées',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <rect x="11" y="12" width="18" height="36" rx="2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="11" y1="30" x2="29" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  },
-  {
-    value: 'V',
-    label: 'V (Triangle inv.)',
-    desc: 'Épaules larges, hanches et taille étroites',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <polygon points="8,12 32,12 20,48" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="14" y1="30" x2="26" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  },
-  {
-    value: 'O',
-    label: 'O (Ovale)',
-    desc: 'Silhouette ronde, taille peu définie',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <ellipse cx="20" cy="30" rx="12" ry="18" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="8" y1="30" x2="32" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  }
-];
-
 function isGibberishText(text) {
   if (!text || !text.trim()) return false;
   
@@ -356,7 +309,6 @@ export default function FormScreen({ onSubmit }) {
     }
 
     if (formData.level === null) { triggerShake('level'); return; }
-    if (!formData.morphology) { triggerShake('morphology'); return; }
     if (!formData.time) { triggerShake('time'); return; }
 
     // Validate text inputs for gibberish
@@ -745,38 +697,6 @@ export default function FormScreen({ onSubmit }) {
             </div>
           </motion.div>
 
-          {/* Morphologie */}
-          <motion.div
-            className="form-group"
-            id="group-morphology"
-            animate={shakeField === 'morphology' ? { x: [-6, 6, -6, 6, 0] } : {}}
-            transition={{ duration: 0.4 }}
-          >
-            <label id="label-morphology">Type de Morphologie <span className="required">*</span></label>
-            <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-morphology">
-              {MORPHOLOGIES.map(morph => {
-                const isSelected = formData.morphology === morph.value;
-                return (
-                  <button
-                    key={morph.value}
-                    type="button"
-                    className={`selector-btn selector-btn-morph${isSelected ? ' selected' : ''}`}
-                    onClick={(e) => {
-                      animateChipClick(e.currentTarget);
-                      updateField('morphology', morph.value);
-                    }}
-                    aria-pressed={isSelected}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem 0.5rem', gap: '0.375rem', minHeight: '120px' }}
-                  >
-                    {morph.svg}
-                    <span style={{ fontWeight: '700', fontSize: '0.9rem' }}>{morph.label}</span>
-                    <span style={{ fontSize: '0.7rem', opacity: 0.7, textAlign: 'center', lineHeight: '1.2' }}>{morph.desc}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-
           {/* Objectifs */}
           <motion.div
             className="form-group"
@@ -1027,7 +947,7 @@ export default function FormScreen({ onSubmit }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.4</span>
+        <span className="beta-badge">Version Beta 1.5</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>

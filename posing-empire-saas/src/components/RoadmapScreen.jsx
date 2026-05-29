@@ -514,7 +514,7 @@ export default function RoadmapScreen({ data, onRestart }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.3</span>
+        <span className="beta-badge">Version Beta 1.5</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
