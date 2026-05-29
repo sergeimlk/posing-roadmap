@@ -67,7 +67,7 @@
   padding: 0 !important;
   margin: 0 !important;
   gap: 0.75rem !important;
-  height: 100% !important;
+  height: 44px !important;
 }
 
 .navbar-dock .dock-item {
@@ -92,4 +92,19 @@
   color: #fff;
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-dock .dock-panel {
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  height: 44px !important;
 }

@@ -6,6 +6,7 @@ import LoadingScreen from './components/LoadingScreen';
 import RoadmapScreen from './components/RoadmapScreen';
 import BilanFormScreen from './components/BilanFormScreen';
 import BilanRoadmapScreen from './components/BilanRoadmapScreen';
+import GradualBlur from './components/reactbits/GradualBlur';
 // import SandboxScreen from './components/SandboxScreen';
 
 function getInitialMode() {
@@ -65,6 +66,17 @@ export default function App() {
   return (
     <>
       <Navbar />
+      <GradualBlur
+        target="page"
+        position="bottom"
+        height="6rem"
+        strength={2.5}
+        divCount={6}
+        curve="bezier"
+        exponential={true}
+        opacity={1}
+        zIndex={500}
+      />
       <AnimatePresence mode="wait">
         {/* ═══ ONBOARDING FLOW ═══ */}
         {currentScreen === 'form' && (

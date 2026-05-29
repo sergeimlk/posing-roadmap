@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import { buildTimeline } from '../utils/buildTimeline';
@@ -17,10 +17,6 @@ const NEEDS_LABELS = {
   presentation_individuelle: 'Présentation Individuelle',
 };
 
-function escHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 function LinkArrowIcon() {
   return (

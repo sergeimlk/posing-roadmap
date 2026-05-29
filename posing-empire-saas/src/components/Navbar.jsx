@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
 import useMagnetic from '../hooks/useMagnetic';
 import Dock from './reactbits/Dock';
+import ShinyText from './reactbits/ShinyText';
 
 export default function Navbar() {
   // Add premium magnetic effect to navbar items on desktop
@@ -60,7 +60,15 @@ export default function Navbar() {
               draggable="false" 
               style={{ pointerEvents: 'none', userSelect: 'none' }} 
             />
-            <span className="nav-brand-text">POSING EMPIRE</span>
+            <ShinyText
+              text="POSING EMPIRE"
+              speed={3}
+              delay={0.5}
+              color="#a5a5a5"
+              shineColor="#ffffff"
+              spread={120}
+              className="nav-brand-text"
+            />
           </div>
         </a>
         
@@ -107,6 +115,7 @@ export default function Navbar() {
               magnification={44}
               distance={120}
               className="navbar-dock"
+              fixedHeight={true}
             />
           </div>
 

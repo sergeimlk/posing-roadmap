@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ShinyText from './reactbits/ShinyText';
 import DecryptedText from './reactbits/DecryptedText';
 import SplitText from './reactbits/SplitText';

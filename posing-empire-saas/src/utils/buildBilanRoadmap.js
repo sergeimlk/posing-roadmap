@@ -220,7 +220,7 @@ function getExampleByLevel(lvl, deb, inter, avance, expert) {
 export function buildBilanRoadmap(data) {
   const {
     fullname, category, federation, level, weekNumber,
-    workDone, workDoneDetails, difficulties, difficultiesDetails,
+    workDone, difficulties, difficultiesDetails,
     mobilityZones, mobilityDetails, presentationProgress,
     routineProgress, nextWeekGoal, isAccompagnement,
     morphology, pointsFortsCustom, pointsFaiblesCustom, stageDate,
@@ -333,7 +333,7 @@ export function buildBilanRoadmap(data) {
     if (weekNumber <= 1) {
       priorites.push(`Assimiler les fondations du posing (méthodologie, vocabulaire, set up)`);
     } else if (weekNumber <= 3) {
-      priorites.push(`Maîtriser les poses spécifiques Men\'s Physique selon ta fédération`);
+      priorites.push(`Maîtriser les poses spécifiques Men's Physique selon ta fédération`);
     } else if (weekNumber <= 5) {
       priorites.push(`Travailler ta présentation individuelle (I-walk/T-walk)`);
     } else {

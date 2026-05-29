@@ -31,10 +31,10 @@ const FEDERATIONS = [
 ];
 
 const LEVELS = [
-  { value: 1, label: '1 – Débutant' },
-  { value: 2, label: '2 – Intermédiaire' },
-  { value: 3, label: '3 – Avancé' },
-  { value: 4, label: '4 – Expert' },
+  { value: 1, label: 'Débutant' },
+  { value: 2, label: 'Intermédiaire' },
+  { value: 3, label: 'Avancé' },
+  { value: 4, label: 'Expert' },
 ];
 
 const MORPHOLOGIES = [
@@ -440,12 +440,13 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
           glowColor="43 75 55"
           backgroundColor="#0a0a0a"
           borderRadius={20}
-          glowRadius={35}
-          glowIntensity={1.2}
+          glowRadius={25}
+          glowIntensity={0.6}
+          fillOpacity={0.15}
           coneSpread={25}
           colors={['#FFD54F', '#D4A843', '#B8942D']}
         >
-          <div className="form-gold-line"></div>
+          {/* <div className="form-gold-line"></div> */}
 
           {/* ═══ SECTION 1: Profil ═══ */}
           <div className="bilan-section-divider">

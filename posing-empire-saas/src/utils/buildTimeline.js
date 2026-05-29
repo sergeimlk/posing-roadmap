@@ -7,6 +7,7 @@
 const SKOOL_BASE = "https://www.skool.com/posing-empire-groupe-prive-6566/classroom";
 
 // ── MODULE 1 LINKS ──
+// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M1 = {
   mindset: `${SKOOL_BASE}/00767693?md=8615761a804d4481b132edec55c87bf9`,
   roadmap: `${SKOOL_BASE}/00767693?md=2e1fb038a7d9487cb269de8ac6789a87`,
@@ -89,11 +90,13 @@ const M4 = {
 };
 
 // ── MODULE 5 (The Classic Class) ──
+// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M5 = {
   intro: `${SKOOL_BASE}/4fadaba1?md=ecbf3208b4b64602b8654bb19bdadf28`,
 };
 
 // ── MODULE 6 (Men's Physique) ──
+// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M6 = {
   intro: `${SKOOL_BASE}/5d616307?md=12e64aa3f94a4a1e83eb8eab695f278f`,
   frontPose: `${SKOOL_BASE}/5d616307?md=2702d42adf224de78b24fac8262dccf6`,
@@ -112,6 +115,7 @@ const M6 = {
 };
 
 // ── MODULE 7 (Compétition) ──
+// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M7 = {
   intro: `${SKOOL_BASE}/23665039?md=37149473458e4cdd8ebe01d942e500bc`,
   deroulement: `${SKOOL_BASE}/23665039?md=04325109c9094dc18ccbd8804eccc2a5`,
@@ -227,6 +231,7 @@ const M9 = {
 };
 
 // ── MODULE 10, 11 ──
+// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M10 = { corrections: `${SKOOL_BASE}/b45370d9` };
 const M11 = {
   posingNote: `${SKOOL_BASE}/7dd7c0a9?md=aa74b5c31eb045adb5d35f834f666e01`,

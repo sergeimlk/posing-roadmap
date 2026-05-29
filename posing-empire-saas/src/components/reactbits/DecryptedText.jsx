@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * DecryptedText Component (from ReactBits)
@@ -55,7 +55,8 @@ export default function DecryptedText({
     }, speed);
   };
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- ReactBits animation: intentional mount-only trigger
+  useEffect(() => { // eslint-disable-line react-hooks/set-state-in-effect
     if (!useHover) {
       startAnimation();
     } else {

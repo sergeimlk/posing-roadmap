@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 import useTilt from '../hooks/useTilt';
 import BorderGlow from './reactbits/BorderGlow';
+import StarBorder from './reactbits/StarBorder';
 
 const CATEGORIES = [
   { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
@@ -59,10 +60,10 @@ const TIMES = [
 ];
 
 const LEVELS = [
-  { value: 1, label: '1 – Débutant' },
-  { value: 2, label: '2 – Intermédiaire' },
-  { value: 3, label: '3 – Avancé' },
-  { value: 4, label: '4 – Expert' },
+  { value: 1, label: 'Débutant' },
+  { value: 2, label: 'Intermédiaire' },
+  { value: 3, label: 'Avancé' },
+  { value: 4, label: 'Expert' },
 ];
 
 function isGibberishText(text) {
@@ -423,12 +424,13 @@ export default function FormScreen({ onSubmit }) {
           glowColor="43 75 55"
           backgroundColor="#0a0a0a"
           borderRadius={20}
-          glowRadius={35}
-          glowIntensity={1.2}
+          glowRadius={25}
+          glowIntensity={0.6}
+          fillOpacity={0.15}
           coneSpread={25}
           colors={['#FFD54F', '#D4A843', '#B8942D']}
         >
-          <div className="form-gold-line"></div>
+          {/* <div className="form-gold-line"></div> */}
 
           {/* Nom & Prénom */}
           <motion.div
@@ -438,16 +440,18 @@ export default function FormScreen({ onSubmit }) {
             transition={{ duration: 0.4 }}
           >
             <label htmlFor="fullname">Nom & Prénom <span className="required">*</span></label>
-            <input
-              type="text"
-              id="fullname"
-              name="fullname"
-              placeholder="Ex: Manaël Dupont"
-              required
-              autoComplete="name"
-              value={formData.fullname}
-              onChange={(e) => updateField('fullname', e.target.value)}
-            />
+            <StarBorder color="rgba(212, 168, 67, 0.4)" speed="6s" className="star-border-wrap" style={{ width: '100%' }}>
+              <input
+                type="text"
+                id="fullname"
+                name="fullname"
+                placeholder="Ex: Manaël Dupont"
+                required
+                autoComplete="name"
+                value={formData.fullname}
+                onChange={(e) => updateField('fullname', e.target.value)}
+              />
+            </StarBorder>
             <AnimatePresence>
               {isGibberishText(formData.fullname) && (
                 <motion.span
@@ -504,13 +508,15 @@ export default function FormScreen({ onSubmit }) {
                   exit={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
                   transition={{ duration: 0.25 }}
                 >
-                  <input
-                    type="text"
-                    placeholder="Précise ta catégorie..."
-                    aria-label="Précise ta catégorie"
-                    value={formData.categoryOther}
-                    onChange={(e) => updateField('categoryOther', e.target.value)}
-                  />
+                  <StarBorder color="rgba(212, 168, 67, 0.4)" speed="6s" className="star-border-wrap" style={{ width: '100%' }}>
+                    <input
+                      type="text"
+                      placeholder="Précise ta catégorie..."
+                      aria-label="Précise ta catégorie"
+                      value={formData.categoryOther}
+                      onChange={(e) => updateField('categoryOther', e.target.value)}
+                    />
+                  </StarBorder>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -535,19 +541,22 @@ export default function FormScreen({ onSubmit }) {
               >
                 <label id="label-stageIntent">Projet de compétition / Scène <span className="required">*</span></label>
                 <div className="selector-grid selector-grid-vertical" role="group" aria-labelledby="label-stageIntent">
-                  {STAGE_INTENTS.map(opt => (
-                    <motion.button
-                      key={opt.value}
-                      type="button"
-                      className={`selector-btn selector-btn-sm${formData.stageIntent === opt.value ? ' selected' : ''}`}
-                      onClick={(e) => handleStageIntentChange(opt.value, e)}
-                      aria-pressed={formData.stageIntent === opt.value}
-                      whileHover={{ scale: 1.005 }}
-                      whileTap={{ scale: 0.99 }}
-                    >
-                      {opt.label}
-                    </motion.button>
-                  ))}
+                  {STAGE_INTENTS.map(opt => {
+                    const isSelected = formData.stageIntent === opt.value;
+                    return (
+                      <motion.button
+                        key={opt.value}
+                        type="button"
+                        className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
+                        onClick={(e) => handleStageIntentChange(opt.value, e)}
+                        aria-pressed={isSelected}
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.99 }}
+                      >
+                        {opt.label}
+                      </motion.button>
+                    );
+                  })}
                 </div>
 
                 <AnimatePresence>
@@ -560,13 +569,15 @@ export default function FormScreen({ onSubmit }) {
                       style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}
                     >
                       <label htmlFor="stageDate" style={{ fontSize: '0.85rem', color: '#ccc' }}>Date de la compétition <span className="required">*</span></label>
-                      <input
-                        type="date"
-                        id="stageDate"
-                        name="stageDate"
-                        value={formData.stageDate}
-                        onChange={(e) => updateField('stageDate', e.target.value)}
-                      />
+                      <StarBorder color="rgba(212, 168, 67, 0.4)" speed="6s" className="star-border-wrap" style={{ width: '100%' }}>
+                        <input
+                          type="date"
+                          id="stageDate"
+                          name="stageDate"
+                          value={formData.stageDate}
+                          onChange={(e) => updateField('stageDate', e.target.value)}
+                        />
+                      </StarBorder>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -624,13 +635,15 @@ export default function FormScreen({ onSubmit }) {
                       exit={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
                       transition={{ duration: 0.25 }}
                     >
-                      <input
-                        type="text"
-                        placeholder="Précise ta fédération / compétition..."
-                        aria-label="Précise ta fédération ou compétition"
-                        value={formData.federationOther}
-                        onChange={(e) => updateField('federationOther', e.target.value)}
-                      />
+                      <StarBorder color="rgba(212, 168, 67, 0.4)" speed="6s" className="star-border-wrap" style={{ width: '100%' }}>
+                        <input
+                          type="text"
+                          placeholder="Précise ta fédération / compétition..."
+                          aria-label="Précise ta fédération ou compétition"
+                          value={formData.federationOther}
+                          onChange={(e) => updateField('federationOther', e.target.value)}
+                        />
+                      </StarBorder>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -657,22 +670,25 @@ export default function FormScreen({ onSubmit }) {
               >
                 <label id="label-hasShorts">As-tu déjà ta tenue de scène / posing (short, slip, maillot) ? <span className="required">*</span></label>
                 <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-hasShorts">
-                  {HAS_SHORTS.map(opt => (
-                    <motion.button
-                      key={opt.value}
-                      type="button"
-                      className={`selector-btn selector-btn-sm${formData.hasShorts === opt.value ? ' selected' : ''}`}
-                      onClick={(e) => {
-                        animateChipClick(e.currentTarget);
-                        updateField('hasShorts', opt.value);
-                      }}
-                      aria-pressed={formData.hasShorts === opt.value}
-                      whileHover={{ scale: 1.005 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {opt.label}
-                    </motion.button>
-                  ))}
+                  {HAS_SHORTS.map(opt => {
+                    const isSelected = formData.hasShorts === opt.value;
+                    return (
+                      <motion.button
+                        key={opt.value}
+                        type="button"
+                        className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
+                        onClick={(e) => {
+                          animateChipClick(e.currentTarget);
+                          updateField('hasShorts', opt.value);
+                        }}
+                        aria-pressed={isSelected}
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {opt.label}
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
@@ -720,14 +736,16 @@ export default function FormScreen({ onSubmit }) {
             transition={{ duration: 0.4 }}
           >
             <label htmlFor="objectives">Objectifs du Skool</label>
-            <textarea
-              id="objectives"
-              name="objectives"
-              placeholder="Ex: Maîtriser les mandatories, préparer ma première compétition, améliorer mes transitions..."
-              rows="3"
-              value={formData.objectives}
-              onChange={(e) => updateField('objectives', e.target.value)}
-            />
+            <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
+              <textarea
+                id="objectives"
+                name="objectives"
+                placeholder="Ex: Maîtriser les mandatories, préparer ma première compétition, améliorer mes transitions..."
+                rows="3"
+                value={formData.objectives}
+                onChange={(e) => updateField('objectives', e.target.value)}
+              />
+            </StarBorder>
             <AnimatePresence>
               {isGibberishText(formData.objectives) && (
                 <motion.span
@@ -780,14 +798,16 @@ export default function FormScreen({ onSubmit }) {
             transition={{ duration: 0.4 }}
           >
             <label htmlFor="problems">Précise tes difficultés physiques (Détails complémentaires, douleurs, raideurs...)</label>
-            <textarea
-              id="problems"
-              name="problems"
-              placeholder="Ex: Douleur épaule droite lors des poses arrières, limitation mobilité omoplate, difficulté sur le vacuum, etc."
-              rows="3"
-              value={formData.problems}
-              onChange={(e) => updateField('problems', e.target.value)}
-            />
+            <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
+              <textarea
+                id="problems"
+                name="problems"
+                placeholder="Ex: Douleur épaule droite lors des poses arrières, limitation mobilité omoplate, difficulté sur le vacuum, etc."
+                rows="3"
+                value={formData.problems}
+                onChange={(e) => updateField('problems', e.target.value)}
+              />
+            </StarBorder>
             <AnimatePresence>
               {isGibberishText(formData.problems) && (
                 <motion.span
@@ -811,14 +831,16 @@ export default function FormScreen({ onSubmit }) {
             transition={{ duration: 0.4 }}
           >
             <label htmlFor="pointsFortsCustom">Décris tes points forts physiques / posing (Optionnel)</label>
-            <textarea
-              id="pointsFortsCustom"
-              name="pointsFortsCustom"
-              placeholder="Ex: Bonne largeur de clavicules, sangle abdominale contrôlée, dos fort..."
-              rows="2"
-              value={formData.pointsFortsCustom}
-              onChange={(e) => updateField('pointsFortsCustom', e.target.value)}
-            />
+            <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
+              <textarea
+                id="pointsFortsCustom"
+                name="pointsFortsCustom"
+                placeholder="Ex: Bonne largeur de clavicules, sangle abdominale contrôlée, dos fort..."
+                rows="2"
+                value={formData.pointsFortsCustom}
+                onChange={(e) => updateField('pointsFortsCustom', e.target.value)}
+              />
+            </StarBorder>
           </motion.div>
 
           {/* Points faibles custom */}
@@ -829,14 +851,16 @@ export default function FormScreen({ onSubmit }) {
             transition={{ duration: 0.4 }}
           >
             <label htmlFor="pointsFaiblesCustom">Décris tes points faibles physiques / posing (Optionnel)</label>
-            <textarea
-              id="pointsFaiblesCustom"
-              name="pointsFaiblesCustom"
-              placeholder="Ex: Manque de volume sur les ischios, rigidité thoracique..."
-              rows="2"
-              value={formData.pointsFaiblesCustom}
-              onChange={(e) => updateField('pointsFaiblesCustom', e.target.value)}
-            />
+            <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
+              <textarea
+                id="pointsFaiblesCustom"
+                name="pointsFaiblesCustom"
+                placeholder="Ex: Manque de volume sur les ischios, rigidité thoracique..."
+                rows="2"
+                value={formData.pointsFaiblesCustom}
+                onChange={(e) => updateField('pointsFaiblesCustom', e.target.value)}
+              />
+            </StarBorder>
           </motion.div>
 
           {/* Temps pratique quotidien */}
@@ -916,17 +940,24 @@ export default function FormScreen({ onSubmit }) {
           </div>
 
           {/* Submit */}
-          <button
+          <StarBorder
             ref={submitBtnRef}
-            type="submit"
-            className="btn-primary-gold btn-submit"
-            id="btn-submit"
+            color="#FFD54F"
+            speed="3.5s"
+            className="star-border-wrap submit-star-border"
           >
-            <span>Générer ma Roadmap</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
+            <button
+              type="submit"
+              className="btn-primary-gold btn-submit"
+              id="btn-submit"
+              style={{ width: '100%' }}
+            >
+              <span>Générer ma Roadmap</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </StarBorder>
 
           {/* RGPD Consent */}
           <motion.div

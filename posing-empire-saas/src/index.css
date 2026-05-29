@@ -152,9 +152,6 @@ body {
   font-weight: 700;
   font-size: 0.875rem;
   letter-spacing: 0.2em;
-  color: #ffffff;
-  background: none;
-  -webkit-text-fill-color: #ffffff;
 }
 
 .nav-brand-link {
@@ -230,6 +227,7 @@ body {
     background: rgba(18, 18, 18, 0.75);
     border: 1px solid rgba(212, 168, 67, 0.18);
     color: #D4A843;
+    margin-top: -2px !important;
   }
   
   .nav-circle-link:hover,
@@ -418,15 +416,33 @@ body {
   border: 1px solid rgba(212, 168, 67, 0.12);
   border-radius: 20px;
   backdrop-filter: blur(12px);
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.5rem 2rem;
   position: relative;
   overflow: visible;
 }
 
 @media (min-width: 640px) {
   .form-card {
-    padding: 2.5rem 2rem;
+    padding: 1.75rem 2rem 2.5rem;
   }
+}
+
+/* Remove top border and top spacing for the first section divider in Bilan Form */
+.border-glow-inner > .bilan-section-divider:first-of-type,
+.border-glow-inner > :first-child.bilan-section-divider,
+.form-card > .bilan-section-divider:first-of-type,
+.form-card > :first-child.bilan-section-divider {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Also ensure the first form group in Onboarding Form has no extra top spacing */
+.border-glow-inner > .form-group:first-of-type,
+.border-glow-inner > :first-child.form-group,
+.form-card > .form-group:first-of-type,
+.form-card > :first-child.form-group {
+  margin-top: 0 !important;
 }
 
 .form-gold-line {
@@ -1352,10 +1368,9 @@ body {
   animation: shake 0.3s ease-in-out;
 }
 
-/* ══════════════ RESPONSIVE ══════════════ */
 @media (max-width: 480px) {
   .form-card {
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem 1.5rem;
   }
 
   .roadmap-header {
@@ -2777,4 +2792,10 @@ select:focus-visible {
   background: var(--card-bg) !important;
   border: 1px solid rgba(212, 168, 67, 0.18) !important;
   box-shadow: none !important;
+}
+
+/* Custom styling for the textarea resize handle (webkit-resizer) to prevent it from being too close to the bottom-right corner */
+textarea::-webkit-resizer {
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid transparent;
 }
