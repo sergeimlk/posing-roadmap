@@ -4,6 +4,7 @@ import BackgroundGrid from './BackgroundGrid';
 import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 import useTilt from '../hooks/useTilt';
+import BorderGlow from './reactbits/BorderGlow';
 
 const CATEGORIES = [
   { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
@@ -411,8 +412,22 @@ export default function FormScreen({ onSubmit }) {
           </p>
         </div>
 
-        {/* Form Card */}
-        <form ref={cardRef} className="form-card" autoComplete="off" onSubmit={handleSubmit}>
+        {/* Form Card with BorderGlow */}
+        <BorderGlow
+          as="form"
+          ref={cardRef}
+          className="form-card"
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          edgeSensitivity={30}
+          glowColor="43 75 55"
+          backgroundColor="#0a0a0a"
+          borderRadius={20}
+          glowRadius={35}
+          glowIntensity={1.2}
+          coneSpread={25}
+          colors={['#FFD54F', '#D4A843', '#B8942D']}
+        >
           <div className="form-gold-line"></div>
 
           {/* Nom & Prénom */}
@@ -942,12 +957,12 @@ export default function FormScreen({ onSubmit }) {
           <p className="form-privacy">
             Vos données de profil sont traitées de manière sécurisée pour générer votre roadmap personnalisée.
           </p>
-        </form>
+        </BorderGlow>
       </motion.div>
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.5</span>
+        <span className="beta-badge">Version Beta 1.6</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>

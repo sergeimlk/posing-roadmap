@@ -512,7 +512,7 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.5</span>
+        <span className="beta-badge">Version Beta 1.6</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>

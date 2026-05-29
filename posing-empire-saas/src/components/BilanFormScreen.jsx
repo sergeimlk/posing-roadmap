@@ -4,6 +4,7 @@ import BackgroundGrid from './BackgroundGrid';
 import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 import useTilt from '../hooks/useTilt';
+import BorderGlow from './reactbits/BorderGlow';
 
 // ── Reusable constants (same as onboarding) ──
 const CATEGORIES = [
@@ -428,8 +429,22 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
           </p>
         </div>
 
-        {/* Form Card */}
-        <form ref={cardRef} className="form-card" autoComplete="off" onSubmit={handleSubmit}>
+        {/* Form Card with BorderGlow */}
+        <BorderGlow
+          as="form"
+          ref={cardRef}
+          className="form-card"
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          edgeSensitivity={30}
+          glowColor="43 75 55"
+          backgroundColor="#0a0a0a"
+          borderRadius={20}
+          glowRadius={35}
+          glowIntensity={1.2}
+          coneSpread={25}
+          colors={['#FFD54F', '#D4A843', '#B8942D']}
+        >
           <div className="form-gold-line"></div>
 
           {/* ═══ SECTION 1: Profil ═══ */}
@@ -1007,7 +1022,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               </svg>
             </button>
           </div>
-        </form>
+        </BorderGlow>
       </motion.div>
     </main>
   );

@@ -74,7 +74,7 @@
   background-color: rgba(18, 15, 23, 0.45) !important;
   border: 1px solid rgba(212, 168, 67, 0.18) !important;
   box-shadow: 0 0 15px rgba(212, 168, 67, 0.05) !important;
-  border-radius: 12px;
+  border-radius: 50% !important;
 }
 
 .navbar-dock .dock-item:hover,

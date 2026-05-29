@@ -11,7 +11,7 @@ export default function Navbar() {
   const dockItems = [
     {
       icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-roadmap)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-roadmap)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
           <defs>
             <linearGradient id="gold-grad-roadmap" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FFD54F" />
@@ -30,7 +30,7 @@ export default function Navbar() {
     },
     {
       icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-bilan)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-bilan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
           <defs>
             <linearGradient id="gold-grad-bilan" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FFD54F" />
@@ -104,8 +104,8 @@ export default function Navbar() {
               items={dockItems}
               panelHeight={52}
               baseItemSize={40}
-              magnification={60}
-              distance={150}
+              magnification={44}
+              distance={120}
               className="navbar-dock"
             />
           </div>
