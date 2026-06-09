@@ -96,7 +96,6 @@ const M5 = {
 };
 
 // ── MODULE 6 (Men's Physique) ──
-// eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M6 = {
   intro: `${SKOOL_BASE}/5d616307?md=12e64aa3f94a4a1e83eb8eab695f278f`,
   frontPose: `${SKOOL_BASE}/5d616307?md=2702d42adf224de78b24fac8262dccf6`,
@@ -230,9 +229,11 @@ const M9 = {
   dynL6: `${SKOOL_BASE}/de36522b?md=8c44916ea56945d8997115911cc62138`,
 };
 
-// ── MODULE 10, 11 ──
+// ── MODULE 10 (Corrections) ──
 // eslint-disable-next-line no-unused-vars -- Reserved for future module integration
 const M10 = { corrections: `${SKOOL_BASE}/b45370d9` };
+
+// ── MODULE 11 (Posing Note) ──
 const M11 = {
   posingNote: `${SKOOL_BASE}/7dd7c0a9?md=aa74b5c31eb045adb5d35f834f666e01`,
   partenariats: `${SKOOL_BASE}/7dd7c0a9?md=ad438663c8a8479c81432881bd0d9144`,
@@ -254,10 +255,11 @@ const CALENDLY_DECOUVERTE = "https://calendly.com/posing-session-reservation/app
 // Helper: create a task with optional link
 function t(icon, text, link) {
   return { icon, text, link: link || null };
-}export function buildTimeline(data) {
+}
+
+export function buildTimeline(data) {
   const weeks = [];
   const cat = data.primaryCategory || (data.categories && data.categories[0]) || 'Non compétiteur';
-  const fed = data.primaryFederation || (data.federations && data.federations[0]) || 'Aucune';
   const isAccompagnement = data.needs && data.needs.includes("accompagnement_1_1");
   const problems = (data.problems || "").toLowerCase();
 
@@ -313,7 +315,27 @@ function t(icon, text, link) {
     });
   }
 
-  // 5. Physical Difficulties & Category Foundations
+  // 5. Category Poses (Month 1 Poses)
+  if (isCPorBB) {
+    s1Tasks.push(t("📹", "Les Quarts de tour — Front Relax", M4.frontRelax));
+    s1Tasks.push(t("📹", "Les Quarts de tour — Side & Back Relax", M4.sideRelax));
+  } else if (isMP) {
+    s1Tasks.push(t("📹", "Men's Physique — Front Pose", M6.frontPose));
+    s1Tasks.push(t("📹", "Men's Physique — Back Pose & Side Poses", M6.backPoseNPC));
+  }
+
+  // 6. Mobility & Vacuum (Month 1 core)
+  if (isCPorBB || isMP) {
+    s1Tasks.push(t("🧘", "Module Mobilité — Introduction", M8.intro));
+    s1Tasks.push(t("🧘", "Module Mobilité — Échauffement complet", M8.echauffement));
+  }
+  if (isCPorBB) {
+    s1Tasks.push(t("📹", "La sangle abdominale & Vacuum", M2.sangleAbdo));
+    s1Tasks.push(t("📹", "Introduction au Vacuum", M9.intro));
+    s1Tasks.push(t("📹", "Tout savoir sur le vacuum", M9.toutSavoir));
+  }
+
+  // 7. Physical Difficulties & Category Foundations (If selected)
   const selProbs = data.selectedProblems || [];
   const hasSymmetry = selProbs.includes("symmetry") || /sym[ée]tr|d[ée]s[ée]quilibr|asym/i.test(problems);
   const hasVacuum = selProbs.includes("vacuum") || /vacuum|abdo|ventre|sangle/i.test(problems);
@@ -329,7 +351,8 @@ function t(icon, text, link) {
     s1Tasks.push(t("📹", "Résoudre une asymétrie (posing)", M2.symetrieResoudre));
     s1Tasks.push(t("📹", "Résoudre une asymétrie (training)", M2.symetrieTraining));
   }
-  if (isCP || isBB || hasVacuum) {
+  // Vacuum if user selected it but is NOT CP/BB (since CP/BB already has it forced above)
+  if (!isCPorBB && hasVacuum) {
     s1Tasks.push(t("📹", "La sangle abdominale", M2.sangleAbdo));
     s1Tasks.push(t("📹", "Introduction au Vacuum", M9.intro));
     s1Tasks.push(t("📹", "Tout savoir sur le vacuum", M9.toutSavoir));
@@ -360,14 +383,14 @@ function t(icon, text, link) {
     s1Tasks.push(t("💪", "Ischios activation avec élastique", M8.ischiosActElast));
   }
 
-  // 6. 1:1 Coaching / Discover
+  // 8. 1:1 Coaching / Discover
   if (isAccompagnement) {
     s1Tasks.push(t("📹", "Onboarding accompagnement 1:1", M12.onboarding));
     s1Tasks.push(t("📋", "Règlement de l'accompagnement", M12.reglement));
     s1Tasks.push(t("📹", "Bien faire ses bilans", M12.bilans));
   } else {
     s1Tasks.push(t("🚀", "Découvrir l'accompagnement 1:1 avec Manaël", CALENDLY_DECOUVERTE));
-    s1Tasks.push(t("📞", "Réserfon appel de découverte gratuit", CALENDLY_DECOUVERTE));
+    s1Tasks.push(t("📞", "Réserver ton appel de découverte gratuit", CALENDLY_DECOUVERTE));
   }
 
   // Fix typo to "Réserver ton appel de découverte gratuit"
@@ -379,87 +402,155 @@ function t(icon, text, link) {
 
   weeks.push({
     phase: "Fondations",
-    title: "Ton Point de Départ & Fondations",
-    description: "Vidéos d'onboarding, mindset, routine et mise en place de ton set up de posing.",
+    title: isCPorBB
+      ? "Fondation, Quarts de Tour, Mobilité & Vacuum"
+      : isMP
+      ? "Fondation, Apprentissage des Poses & Mobilité"
+      : isNonCompet
+      ? "Posture, Placement & Fondations"
+      : "Bases de Posing & Placement",
+    description: isCPorBB
+      ? "Apprentissage des bases de ta catégorie, maîtrise des quarts de tour, et introduction au protocole de mobilité et de contrôle abdominal (Vacuum)."
+      : isMP
+      ? "Apprentissage des poses spécifiques de ta catégorie (Front & Back Pose), placement du haut du corps et étirements/mobilité ciblée."
+      : isNonCompet
+      ? "Apprentissage de la posture fière, respiration et alignement corporel de base."
+      : "Bases de ta catégorie, placement de base des pieds et du buste.",
     tasks: s1Tasks
   });
 
-  // Mois 2 to 12
+  // Mois 2 to 6
   if (isCPorBB) {
-    const isNPC = fed === "NPC";
     weeks.push(
-      { phase: "Catégorie", title: "Quarts de tour & placement du bas du corps", description: "Maîtrise des quarts de tour et du placement du bas du corps en position symétrique.", tasks: [] },
-      { phase: "Catégorie", title: "Mandatories (poses obligatoires)", description: "Étude et pratique des poses obligatoires de ta catégorie (front, side, back...) selon les règlements de ta fédération.", tasks: [] },
-      { phase: "Catégorie", title: "Continuation des mandatories", description: "Continuation de l'apprentissage et consolidation des poses imposées de ta catégorie face au miroir.", tasks: [] },
-      { phase: "Catégorie", title: "Transitions quarts de tour", description: "Apprentissage des transitions fluides entre les quarts de tour.", tasks: [] },
-      { phase: "Catégorie", title: "Transitions des mandatories", description: "Travail des transitions complexes entre les poses obligatoires (Mandatories).", tasks: [] },
-      { 
-        phase: "Présentation", 
-        title: isNPC ? "Présentation individuelle (NPC)" : "Consolidation des acquis", 
-        description: isNPC 
-          ? "Apprentissage de ton entrée de présentation individuelle en scène (I-walk/T-walk NPC)." 
-          : "Perfectionnement et consolidation de tes quarts de tour et de tes poses imposées. Les fédérations comme WNBF ou IFBB ne requérant pas de présentation individuelle à cette étape, nous mettons l'accent sur la tenue des poses.", 
-        tasks: [] 
+      {
+        phase: "Poses Imposées",
+        title: "Mandatories (Poses Obligatoires), Mobilité & Vacuum",
+        description: "Apprentissage technique et tenue des poses imposées (Front Double Biceps, Side Chest, Back Lat Spread...) avec renforcement de la sangle abdominale.",
+        tasks: []
       },
-      { phase: "Routine", title: "Routine libre & The Classic Class", description: "Création de ta routine libre et accès aux contenus avancés artistiques du module The Classic Class.", tasks: [] },
-      { phase: "Routine", title: "Optimisation de la routine libre", description: "Optimisation du rythme, choix de la musique et synchronisation avec les transitions.", tasks: [] },
-      { phase: "Technique", title: "Optimisation des poses", description: "Amélioration de la fluidité générale et corrections individuelles des poses clés via les corrections de groupe.", tasks: [] },
-      { phase: "Performance", title: "Optimisation des transitions", description: "Pratique intensive des enchaînements, micro-transitions et endurance de pose.", tasks: [] },
-      { phase: "Scène", title: "Finalisation routine & présentation", description: "Simulation de passage sur scène, gestion du stress, de la respiration et de l'attitude.", tasks: [] }
+      {
+        phase: "Enchaînements",
+        title: "Transitions (Quarts de Tour & Mandatories)",
+        description: "Apprentissage des transitions fluides entre chaque pose obligatoire et quart de tour pour un rendu professionnel continu.",
+        tasks: []
+      },
+      {
+        phase: "Artistique",
+        title: "Création & Apprentissage de la Présentation Individuelle / Routine",
+        description: "Chorégraphie et écriture de ton passage individuel (I-Walk/T-Walk ou routine libre) calés sur le bon rythme et la musique.",
+        tasks: []
+      },
+      {
+        phase: "Performance",
+        title: "Endurance & Présence Scénique",
+        description: "Tenue prolongée des poses pour simuler les comparaisons des juges, gestion de l'attitude face au public, du regard et du charisme scénique.",
+        tasks: []
+      },
+      {
+        phase: "Perfectionnement",
+        title: "Pérennisation : Répétitions & Optimisation Globale",
+        description: "Répétition générale en conditions réelles, micro-ajustements des poses, enchaînements fluides et routine finale pour être prêt(e) pour le jour J.",
+        tasks: []
+      }
     );
   } else if (isMP) {
-    const isWNBF = fed === "WNBF";
-    const isIFBB = fed === "IFBB";
-    const isNPC = fed === "NPC";
-    const presTitle = isNPC ? "Présentation NPC (I-walk)" : isWNBF ? "Présentation WNBF (T-walk)" : isIFBB ? "Présentation IFBB (I-walk)" : "Présentation individuelle";
-    const presDesc = isNPC 
-      ? "Apprentissage de l'I-walk spécifique au règlement Men's Physique NPC." 
-      : isWNBF 
-      ? "Apprentissage de la T-walk spécifique au règlement Men's Physique WNBF." 
-      : isIFBB 
-      ? "Apprentissage de l'I-walk spécifique au règlement Men's Physique IFBB." 
-      : "Apprentissage de la marche scénique (I-walk/T-walk) adaptée au règlement de ta fédération.";
-
     weeks.push(
-      { phase: "Catégorie", title: "Poses selon fédération", description: "Apprentissage et perfectionnement de la Front Pose et de la Back Pose (quarts de tour ou placement front/back uniquement selon le règlement de ta fédération).", tasks: [] },
-      { phase: "Catégorie", title: "Transitions selon fédération", description: "Travail sur les transitions et la fluidité des rotations adaptées au règlement de ta fédération.", tasks: [] },
-      { phase: "Présentation", title: presTitle, description: presDesc, tasks: [] },
-      { phase: "Présence", title: "Présence scénique", description: "Développement du charisme, de l'attitude, du regard et du sourire face aux juges (module Compétition) et optimisation via les séances de groupe.", tasks: [] },
-      { phase: "Technique", title: "Optimisation des poses", description: "Ajustement de la hauteur des bras, de l'ouverture du dos et de la cambrure.", tasks: [] },
-      { phase: "Technique", title: "Enchaînements", description: "Enchaînement rapide des poses et des transitions sans perte de contrôle de la sangle abdominale.", tasks: [] },
-      { phase: "Performance", title: "Endurance", description: "Tenue des poses sous tension pour simuler les comparaisons de scène prolongées.", tasks: [] },
-      { phase: "Performance", title: "Simulation", description: "Simulations de line-up complets et de call-outs avec des variations de rythme.", tasks: [] },
-      { phase: "Technique", title: "Ajustements fins", description: "Corrections individualisées sur les détails de posture et de placement des mains/pieds.", tasks: [] },
-      { phase: "Logistique", title: "Logistique/Tan", description: "Préparation logistique pour le jour J, gestion du tan et de la congestion (pump) backstage.", tasks: [] },
-      { phase: "Scène", title: "Finalisation & plan long terme", description: "Répétitions finales et définition de la stratégie post-compétition.", tasks: [] }
+      {
+        phase: "Enchaînements",
+        title: "Transitions & Mobilité",
+        description: "Maîtrise des quarts de tour et des demi-tours fluides et rythmés pour passer d'une pose à l'autre sans perdre sa structure musculaire.",
+        tasks: []
+      },
+      {
+        phase: "Artistique",
+        title: "Création & Apprentissage de la Présentation Individuelle",
+        description: "Construction de ton passage de présentation en scène (I-walk/T-walk) personnalisé selon ton règlement de fédération.",
+        tasks: []
+      },
+      {
+        phase: "Technique",
+        title: "Endurance & Optimisation des Poses et Transitions",
+        description: "Optimisation des lignes de pose (hauteur d'épaules, placement des mains) et travail d'endurance pour tenir les poses de longues minutes.",
+        tasks: []
+      },
+      {
+        phase: "Performance",
+        title: "Révision des Difficultés & Présence Scénique",
+        description: "Résolution de tes points faibles techniques, travail du charisme, sourire, gestion du stress et attitude face aux juges.",
+        tasks: []
+      },
+      {
+        phase: "Perfectionnement",
+        title: "Pérennisation : Optimisation & Répétition Générale",
+        description: "Répétition générale des poses, transitions et présentation individuelle en conditions réelles pour parfaire ton flow de compétition.",
+        tasks: []
+      }
     );
   } else if (isNonCompet) {
     weeks.push(
-      { phase: "Bien-être", title: "Vacuum & Posture", description: "Travail quotidien de la sangle abdominale et développement d'une posture fière.", tasks: [] },
-      { phase: "Bien-être", title: "Ouverture de dos", description: "Exercices de protraction des omoplates et apprentissage de l'ouverture des dorsaux.", tasks: [] },
-      { phase: "Symétrie", title: "Symétrie quotidienne", description: "Correction des déséquilibres posturaux et des habitudes asymétriques du quotidien.", tasks: [] },
-      { phase: "Mobilité", title: "Mobilité hanches/bassin", description: "Assouplissement du bassin et amélioration de l'antéversion/rétroversion.", tasks: [] },
-      { phase: "Mobilité", title: "Mobilité épaules", description: "Routine d'étirement et d'activation pour libérer la raideur des épaules.", tasks: [] },
-      { phase: "Flow", title: "Transitions douces", description: "Travail des transitions fluides entre postures esthétiques.", tasks: [] },
-      { phase: "Esthétique", title: "Poses esthétiques personnelles", description: "Choix et apprentissage des poses mettant le plus en valeur ton physique.", tasks: [] },
-      { phase: "Flow", title: "Rythme & Flow", description: "Pratique rythmée avec contrôle respiratoire et mouvements harmonieux.", tasks: [] },
-      { phase: "Maintien", title: "Optimisation posture", description: "Consolidation de l'ouverture thoracique et du maintien.", tasks: [] },
-      { phase: "Maintien", title: "Endurance de pose", description: "Travail d'endurance musculaire sur tes poses favorites.", tasks: [] },
-      { phase: "Bilan", title: "Bilan & Shooting", description: "Finalisation de tes enchaînements et préparation de ton shooting de bilan (3 mois).", tasks: [] }
+      {
+        phase: "Silhouette",
+        title: "Sangle Abdominale & Vacuum",
+        description: "Renforcement musculaire de la sangle abdominale profonde et contrôle du ventre.",
+        tasks: []
+      },
+      {
+        phase: "Ouverture",
+        title: "Ouverture Thoracique & Dorsaux",
+        description: "Développement de l'ouverture du dos et libération des épaules pour un physique plus large et athlétique.",
+        tasks: []
+      },
+      {
+        phase: "Mobilité",
+        title: "Mobilité des Hanches & du Bassin",
+        description: "Assouplissement et contrôle du bassin pour une posture plus dynamique et fluide.",
+        tasks: []
+      },
+      {
+        phase: "Harmonie",
+        title: "Poses Esthétiques Personnelles & Flow",
+        description: "Sélection et maîtrise des enchaînements et des angles de pose qui mettent le plus en valeur ton physique.",
+        tasks: []
+      },
+      {
+        phase: "Consolidation",
+        title: "Pérennisation & Shooting Photo Bilan",
+        description: "Intégration de tous les mouvements et réalisation de ton bilan visuel complet pour mesurer ta progression.",
+        tasks: []
+      }
     );
   } else {
     weeks.push(
-      { phase: "Catégorie", title: "Poses de base", description: "Apprentissage des poses imposées de ta catégorie.", tasks: [] },
-      { phase: "Catégorie", title: "Transitions", description: "Fluidité des enchaînements entre les poses.", tasks: [] },
-      { phase: "Présentation", title: "Présentation", description: "Marche, entrée et sortie de scène selon les règlements.", tasks: [] },
-      { phase: "Présence", title: "Présence scénique", description: "Attitude face aux juges, regard et assurance.", tasks: [] },
-      { phase: "Technique", title: "Optimisation technique", description: "Amélioration des lignes et ajustement des placements.", tasks: [] },
-      { phase: "Performance", title: "Endurance de pose", description: "Répétitions des enchaînements sous fatigue.", tasks: [] },
-      { phase: "Routine", title: "Routine/Chorégraphie", description: "Création de ta routine de passage.", tasks: [] },
-      { phase: "Technique", title: "Perfectionnement", description: "Correction des points faibles techniques.", tasks: [] },
-      { phase: "Technique", title: "Gestion sangle abdominale", description: "Maintien du contrôle abdominal sous tension.", tasks: [] },
-      { phase: "Logistique", title: "Backstage & Tan", description: "Stratégie de congestion et logistique du jour J.", tasks: [] },
-      { phase: "Scène", title: "Simulation scène", description: "Répetition finale en conditions réelles.", tasks: [] }
+      {
+        phase: "Catégorie",
+        title: "Poses de base & Placement",
+        description: "Apprentissage des poses imposées de ta catégorie.",
+        tasks: []
+      },
+      {
+        phase: "Présentation",
+        title: "Présentation Individuelle & T-Walk",
+        description: "Marche, entrée et sortie de scène selon les règlements.",
+        tasks: []
+      },
+      {
+        phase: "Performance",
+        title: "Endurance de Pose & Lignes",
+        description: "Répétitions des enchaînements sous fatigue et ajustement des lignes.",
+        tasks: []
+      },
+      {
+        phase: "Scène",
+        title: "Présence Scénique & Attitude",
+        description: "Charisme, démarche, gestion du stress et attitude devant les juges.",
+        tasks: []
+      },
+      {
+        phase: "Perfectionnement",
+        title: "Pérennisation : Répétitions Finales",
+        description: "Simulations complètes en conditions réelles de scène avant le jour J.",
+        tasks: []
+      }
     );
   }
 

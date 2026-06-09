@@ -6,8 +6,8 @@ import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 import useTilt from '../hooks/useTilt';
 import BorderGlow from './reactbits/BorderGlow';
-import StarBorder from './reactbits/StarBorder';
 import Calendar from './reactbits/Calendar';
+import { submitData } from '../utils/submitData';
 
 // ── Reusable constants (same as onboarding) ──
 const CATEGORIES = [
@@ -211,6 +211,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
 
   const [shakeField, setShakeField] = useState(null);
   const [showCalendarPopover, setShowCalendarPopover] = useState(false);
+  const [calendarCoords, setCalendarCoords] = useState({ top: 0, left: 0, width: 290 });
   const calendarBtnRef = useRef(null);
 
   const submitBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15, maxTravelX: 6, maxTravelY: 10 });
@@ -410,6 +411,9 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
       pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
       stageDate: formData.stageDate,
     };
+
+    // Envoi en arrière-plan vers Supabase + Google Sheets (non bloquant)
+    submitData('bilan', submissionData).catch(() => {});
 
     onSubmit(submissionData);
   };
@@ -649,7 +653,15 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   ref={calendarBtnRef}
                   type="button"
                   className="calendar-trigger-btn"
-                  onClick={() => setShowCalendarPopover(prev => !prev)}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setCalendarCoords({
+                      top: rect.bottom,
+                      left: rect.left,
+                      width: rect.width
+                    });
+                    setShowCalendarPopover(prev => !prev);
+                  }}
                   style={{
                     color: formData.stageDate ? '#FFF' : '#666'
                   }}
@@ -685,9 +697,9 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                       style={{
                         position: 'fixed',
                         zIndex: 9999,
-                        top: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().bottom + 8 : 0,
-                        left: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().left : 0,
-                        width: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().width : 290,
+                        top: calendarCoords.top + 8,
+                        left: calendarCoords.left,
+                        width: calendarCoords.width,
                         display: 'flex',
                         justifyContent: 'center'
                       }}

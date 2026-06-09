@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import { buildBilanRoadmap } from '../utils/buildBilanRoadmap';
@@ -125,7 +125,9 @@ function formatStageCountdown(stageDateStr) {
   return `S-${weeks} (${formattedDate})`;
 }
 
-export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
+export default function BilanRoadmapScreen({ data, onRestart }) {
+  const fullname = data?.fullname || '';
+  const weekNumber = data?.weekNumber || 1;
   const [downloading, setDownloading] = useState(false);
   
   const downloadBtnRef = useMagnetic({ strength: 0.1, textStrength: 0.05, maxTravelX: 6, maxTravelY: 6 });
@@ -155,10 +157,10 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
-    const success = await generatePDF('bilan-roadmap-pdf-content', `${meta.fullname}-S${meta.weekNumber}`);
+    const success = await generatePDF('bilan-roadmap-pdf-content', `${fullname}-S${weekNumber}`);
     if (!success) alert('Erreur lors de la génération du PDF. Essaye à nouveau.');
     setDownloading(false);
-  }, [meta.fullname, meta.weekNumber]);
+  }, [fullname, weekNumber]);
 
   const hasMobilite = planAction.mobilite.length > 0;
   const hasActivation = planAction.activation.length > 0;

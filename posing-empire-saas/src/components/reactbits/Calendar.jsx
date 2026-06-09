@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import "./Calendar.css";
 
 const MONTHS = [
@@ -13,14 +13,6 @@ export default function Calendar({ selected, onSelect, className = "" }) {
   const referenceDate = selected || new Date();
   const [currentMonth, setCurrentMonth] = useState(referenceDate.getMonth());
   const [currentYear, setCurrentYear] = useState(referenceDate.getFullYear());
-
-  // Keep view in sync when selected date changes externally
-  useEffect(() => { // eslint-disable-line react-hooks/set-state-in-effect -- Syncing local state from controlled prop
-    if (selected) {
-      setCurrentMonth(selected.getMonth());
-      setCurrentYear(selected.getFullYear());
-    }
-  }, [selected]);
 
   // Generate years range (from 2 years ago to 8 years in the future)
   const years = useMemo(() => {

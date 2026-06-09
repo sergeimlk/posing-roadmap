@@ -146,9 +146,7 @@ const BorderGlow = forwardRef(({
 
       return () => {
         active = false;
-        if (cardRef.current) {
-          cardRef.current.classList.remove('auto-glow-active');
-        }
+        card.classList.remove('auto-glow-active');
       };
     } else {
       // Desktop intro sweep animation
@@ -157,7 +155,7 @@ const BorderGlow = forwardRef(({
       const angleEnd = 465;
       card.classList.add('sweep-active');
       card.style.setProperty('--cursor-angle', `${angleStart}deg`);
-
+ 
       animateValue({ duration: 500, onUpdate: v => card.style.setProperty('--edge-proximity', v) });
       animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
         card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
@@ -168,7 +166,7 @@ const BorderGlow = forwardRef(({
       animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
         onUpdate: v => card.style.setProperty('--edge-proximity', v),
         onEnd: () => {
-          if (cardRef.current) cardRef.current.classList.remove('sweep-active');
+          card.classList.remove('sweep-active');
         },
       });
     }

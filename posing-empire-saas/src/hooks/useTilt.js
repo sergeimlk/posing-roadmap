@@ -9,7 +9,7 @@ import { useRef } from 'react';
  * 
  * @param {Object} options Configuration options
  */
-export default function useTilt({ maxTilt = 5, perspective = 1000, scale = 1.01 } = {}) {
+export default function useTilt() {
   const ref = useRef(null);
   return ref;
 }

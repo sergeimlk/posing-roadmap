@@ -305,7 +305,7 @@ export default function RoadmapScreen({ data, onRestart }) {
           </div>
 
           {/* TIMELINE */}
-          <div className="roadmap-section-title">📋 Ta Roadmap sur 12 mois</div>
+          <div className="roadmap-section-title">📋 Ta Roadmap sur 6 mois</div>
           <div className="roadmap-timeline">
             {timeline.map((item, i) => {
               const isFirst = i === 0;

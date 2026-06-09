@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import FormScreen from './components/FormScreen';
@@ -6,7 +6,6 @@ import LoadingScreen from './components/LoadingScreen';
 import RoadmapScreen from './components/RoadmapScreen';
 import BilanFormScreen from './components/BilanFormScreen';
 import BilanRoadmapScreen from './components/BilanRoadmapScreen';
-import GradualBlur from './components/reactbits/GradualBlur';
 // import SandboxScreen from './components/SandboxScreen';
 
 function getInitialMode() {

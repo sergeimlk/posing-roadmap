@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
  * DecryptedText Component (from ReactBits)
@@ -13,13 +13,19 @@ export default function DecryptedText({
   className = '' 
 }) {
   const [displayedText, setDisplayedText] = useState(text);
+  const [prevText, setPrevText] = useState(text);
   const [isAnimating, setIsAnimating] = useState(false);
   const intervalRef = useRef(null);
+  
+  if (text !== prevText) {
+    setPrevText(text);
+    setDisplayedText(text);
+  }
   
   // Custom characters for scramble (excluding space)
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%&*+-/\\?[]{}';
 
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
     let iterations = 0;
@@ -53,17 +59,20 @@ export default function DecryptedText({
         setDisplayedText(text);
       }
     }, speed);
-  };
+  }, [isAnimating, text, sequential, maxIterations, chars, speed]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- ReactBits animation: intentional mount-only trigger
-  useEffect(() => { // eslint-disable-line react-hooks/set-state-in-effect
+  useEffect(() => {
+    let timer;
     if (!useHover) {
-      startAnimation();
-    } else {
-      setDisplayedText(text);
+      timer = setTimeout(() => {
+        startAnimation();
+      }, 0);
     }
-    return () => clearInterval(intervalRef.current);
-  }, [text, useHover]);
+    return () => {
+      if (timer) clearTimeout(timer);
+      clearInterval(intervalRef.current);
+    };
+  }, [useHover, startAnimation]);
 
   return (
     <span 
