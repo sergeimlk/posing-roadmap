@@ -157,7 +157,7 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
-    const success = await generatePDF('bilan-roadmap-pdf-content', `${fullname}-S${weekNumber}`);
+    const success = await generatePDF('bilan-roadmap-pdf-content', `Roadmap - ${fullname || 'Athlete'} - Semaine ${weekNumber}`);
     if (!success) alert('Erreur lors de la génération du PDF. Essaye à nouveau.');
     setDownloading(false);
   }, [fullname, weekNumber]);

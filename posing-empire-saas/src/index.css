@@ -1418,11 +1418,14 @@ body {
 .roadmap-logo-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.25rem;
+  align-items: center;
+  margin-bottom: 0.1rem;
+  height: 180px;
+  overflow: hidden;
 }
 
 .roadmap-logo {
-  height: 336px;
+  height: 380px;
   width: auto;
   max-width: 100%;
   object-fit: contain;
@@ -2724,17 +2727,24 @@ select:focus-visible {
   margin-bottom: 0 !important;
 }
 
+.html2canvas-container .roadmap-logo-container {
+  height: 90px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 0.05rem !important;
+}
 .html2canvas-container .roadmap-logo {
-  height: 160px !important;
+  height: 190px !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
 }
 .html2canvas-container .roadmap-header {
-  padding: 0.75rem 2rem 0.5rem !important;
+  padding: 0.4rem 2rem 0.4rem !important;
 }
 .html2canvas-container .roadmap-client-info {
   padding: 1rem 2rem !important;
-}
-.html2canvas-container .roadmap-logo-container {
-  margin-bottom: 0.125rem !important;
 }
 
 /* ══════════════ MORPHOLOGY SELECTOR & SVGS ══════════════ */

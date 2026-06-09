@@ -1,7 +1,7 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-export async function generatePDF(elementId, fullname) {
+export async function generatePDF(elementId, filename) {
   let clonedElement = null;
   try {
     const originalElement = document.getElementById(elementId);
@@ -54,13 +54,21 @@ export async function generatePDF(elementId, fullname) {
     blocks.push(...timelineItems);
     if (footer) blocks.push(footer);
 
+    // Filter out nested blocks (descendants of already matched blocks) to prevent duplicate spacing calculations
+    const filteredBlocks = [];
+    blocks.forEach(block => {
+      if (!filteredBlocks.some(parent => parent.contains(block))) {
+        filteredBlocks.push(block);
+      }
+    });
+
     // High performance batch measurements to avoid layout thrashing
-    const blockHeights = blocks.map(block => block.getBoundingClientRect().height);
+    const blockHeights = filteredBlocks.map(block => block.getBoundingClientRect().height);
     const spacersToInsert = [];
     let currentY = 0;
 
-    for (let i = 0; i < blocks.length; i++) {
-      const block = blocks[i];
+    for (let i = 0; i < filteredBlocks.length; i++) {
+      const block = filteredBlocks[i];
       const h = blockHeights[i];
       let blockTop = currentY;
       let blockBottom = currentY + h;
@@ -69,15 +77,18 @@ export async function generatePDF(elementId, fullname) {
       const nextPage = Math.floor((blockBottom - 4) / pageHeightPx);
 
       if (nextPage > currentPage) {
-        const targetY = nextPage * pageHeightPx;
-        const spaceNeeded = targetY - blockTop;
+        // Only insert a spacer if the block is not already starting exactly at the top of a page
+        const offsetFromPageStart = blockTop % pageHeightPx;
+        if (offsetFromPageStart >= 5) {
+          const targetY = nextPage * pageHeightPx;
+          const spaceNeeded = targetY - blockTop;
 
-        // Seuil de 250px max pour éviter les grands vides noirs
-        if (spaceNeeded > 0 && spaceNeeded < 250) {
-          spacersToInsert.push({ block, height: spaceNeeded });
-          currentY += spaceNeeded;
-          blockTop = currentY;
-          blockBottom = currentY + h;
+          if (spaceNeeded > 0) {
+            spacersToInsert.push({ block, height: spaceNeeded });
+            currentY += spaceNeeded;
+            blockTop = currentY;
+            blockBottom = currentY + h;
+          }
         }
       }
       currentY = blockBottom;
@@ -165,8 +176,8 @@ export async function generatePDF(elementId, fullname) {
       });
     }
 
-    const name = (fullname || 'athlete').trim().replace(/\s+/g, '_');
-    pdf.save(`Roadmap_PosingEmpire_${name}.pdf`);
+    const finalFilename = filename && filename.trim() ? (filename.toLowerCase().endsWith('.pdf') ? filename.trim() : `${filename.trim()}.pdf`) : 'Roadmap.pdf';
+    pdf.save(finalFilename);
     return true;
   } catch (err) {
     console.error('PDF generation error:', err);

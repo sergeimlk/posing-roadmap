@@ -187,7 +187,7 @@ export default function RoadmapScreen({ data, onRestart }) {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
-    const success = await generatePDF('roadmap-pdf-content', data.fullname);
+    const success = await generatePDF('roadmap-pdf-content', `Roadmap - ${data.fullname || 'Athlete'}`);
     if (!success) {
       alert('Erreur lors de la génération du PDF. Essaye à nouveau.');
     }
