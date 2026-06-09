@@ -2712,7 +2712,7 @@ select:focus-visible {
 }
 
 /* ══════════════ NEW LAYOUT CORRECTIONS ══════════════ */
-.timeline-header-meta {
+.html2canvas-container .timeline-header-meta {
   flex-wrap: nowrap !important;
 }
 
@@ -2721,10 +2721,12 @@ select:focus-visible {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 20px !important;
+  height: auto !important;
+  padding: 3px 8px !important;
   line-height: 1 !important;
   box-sizing: border-box !important;
   margin-bottom: 0 !important;
+  vertical-align: middle !important;
 }
 
 .html2canvas-container .roadmap-logo-container {
@@ -2836,4 +2838,34 @@ select:focus-visible {
 textarea::-webkit-resizer {
   border-right: 5px solid transparent;
   border-bottom: 5px solid transparent;
+}
+
+/* ══════════════ MOBILE ROADMAP LAYOUT IMPROVEMENTS ══════════════ */
+@media (max-width: 640px) {
+  .roadmap-client-info {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem 0 !important;
+  }
+  
+  .roadmap-timeline {
+    padding: 1rem 1rem 1rem !important;
+  }
+  
+  .timeline-item {
+    gap: 0.75rem !important;
+  }
+  
+  .timeline-left {
+    min-width: 40px !important;
+  }
+  
+  .timeline-content {
+    padding: 0.75rem 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .screen {
+    padding: 80px 0.75rem 2rem !important;
+  }
 }
