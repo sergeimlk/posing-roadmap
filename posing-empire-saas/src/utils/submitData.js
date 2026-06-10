@@ -111,6 +111,7 @@ export async function submitData(type, payload) {
   const sheetWebhookUrl = type === 'onboarding'
     ? onboardingSheetWebhookUrl
     : bilanSheetWebhookUrl;
+  const sheetsSecret = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_SECRET;
 
   if (sheetWebhookUrl) {
     promises.push(
@@ -118,7 +119,7 @@ export async function submitData(type, payload) {
         method: 'POST',
         mode: 'no-cors', // Obligatoire pour les Google Apps Script déployés en Web App
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, ...payload }),
+        body: JSON.stringify({ type, secret: sheetsSecret, ...payload }),
       })
         .then(() => {
           results.sheets = true;

@@ -157,7 +157,7 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
-    const success = await generatePDF('bilan-roadmap-pdf-content', `Roadmap - ${fullname || 'Athlete'} - Semaine ${weekNumber}`);
+    const success = await generatePDF('bilan-roadmap-pdf-content', `Fiche Bilan - ${fullname || 'Athlete'} - Semaine ${weekNumber}`);
     if (!success) alert('Erreur lors de la génération du PDF. Essaye à nouveau.');
     setDownloading(false);
   }, [fullname, weekNumber]);
@@ -190,7 +190,7 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
           </svg>
-          <span>{downloading ? 'Génération en cours...' : 'Télécharger ma Roadmap PDF'}</span>
+          <span>{downloading ? 'Génération en cours...' : 'Télécharger ma fiche bilan'}</span>
         </button>
         <button
           ref={restartBtnRef}
@@ -213,14 +213,14 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <div className="roadmap-page">
+        <div className="roadmap-page" style={{ userSelect: 'text' }}>
           {/* HEADER */}
           <div className="roadmap-header">
             <div className="roadmap-logo-container">
               <img src="/posing-empire.svg" alt="Posing Empire Logo" className="roadmap-logo" draggable="false" style={{ pointerEvents: 'none', userSelect: 'none' }} />
             </div>
             <div className="roadmap-program-label">
-              ROADMAP — SEMAINE {String(meta.weekNumber).padStart(2, '0')} | {meta.fullname} | {meta.category} — {meta.federation}
+              FICHE BILAN HEBDOMADAIRE — SEMAINE {String(meta.weekNumber).padStart(2, '0')} | {meta.fullname} | {meta.category} — {meta.federation}
             </div>
           </div>
 
@@ -514,7 +514,6 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.6</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
@@ -526,9 +525,6 @@ export default function BilanRoadmapScreen({ data, onRestart }) {
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
         </p>
-        <div style={{ color: '#151515', fontSize: '8px', marginTop: '6px', fontFamily: 'monospace' }}>
-          29.05.2026
-        </div>
       </div>
     </main>
   );

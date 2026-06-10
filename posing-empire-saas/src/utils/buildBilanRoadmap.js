@@ -424,11 +424,6 @@ export function buildBilanRoadmap(data) {
       objectif: `Augmenter l'amplitude de rotation du tronc de manière progressive.`,
       link: M8.rotTroncBaton,
     });
-    mobilite.push({
-      exercice: 'Rotation avec ballon',
-      objectif: `Travailler la rotation dynamique du tronc avec résistance.`,
-      link: M8.rotTroncBallon,
-    });
   }
   if (mobilityZones.includes('epaules') || allDetails.includes('épaule') || allDetails.includes('shoulder')) {
     mobilite.push({
@@ -453,11 +448,6 @@ export function buildBilanRoadmap(data) {
       objectif: `Renforcer la protraction en position verticale pour un transfert direct aux poses.`,
       link: M8.protractionVrouleau,
     });
-    mobilite.push({
-      exercice: 'Massage avec rouleau',
-      objectif: `Relâcher les tensions dorsales et faciliter l'ouverture des dorsaux.`,
-      link: M8.massageRouleau,
-    });
   }
 
   // Always include warmup if any mobility is recommended
@@ -468,6 +458,11 @@ export function buildBilanRoadmap(data) {
       link: M8.echauffement,
     });
   }
+
+  // Number all mobility exercises by priority order
+  mobilite.forEach((ex, i) => {
+    ex.exercice = `${i + 1}. ${ex.exercice}`;
+  });
 
   // ── ACTIVATION MUSCULAIRE ──
   if (allDetails.includes('quad') || allDetails.includes('jambe') || allDetails.includes('cuisse')) {
@@ -719,7 +714,9 @@ export function buildBilanRoadmap(data) {
     meta: {
       fullname,
       category,
+      categories: data.categories,
       federation,
+      federations: data.federations,
       level,
       weekNumber,
       isAccompagnement,

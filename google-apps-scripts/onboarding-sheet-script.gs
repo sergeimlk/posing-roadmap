@@ -36,6 +36,14 @@ function setupSheet() {
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
+    
+    // Validation du token secret partagé pour sécuriser l'API
+    var EXPECTED_SECRET = "PE_Webhook_Secret_2026_Secure";
+    if (!data || data.secret !== EXPECTED_SECRET) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Unauthorized" }))
+                           .setMimeType(ContentService.MimeType.JSON);
+    }
+    
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Questionnaires Onboarding") || ss.getActiveSheet();
     var now = new Date();

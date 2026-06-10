@@ -14,7 +14,7 @@ export async function generatePDF(elementId, filename) {
     clonedElement.style.position = 'absolute';
     clonedElement.style.left = '-9999px';
     clonedElement.style.top = '0px'; // Keep top close to 0 to avoid coordinate offset bugs
-    clonedElement.style.width = '800px';
+    clonedElement.style.width = '900px';
     clonedElement.style.maxHeight = 'none';
     clonedElement.style.overflow = 'visible';
     
@@ -40,7 +40,7 @@ export async function generatePDF(elementId, filename) {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     // Dynamic page splitting with page-break spacers on the clone
-    const pageHeightPx = 1130; // A4 aspect ratio height at 800px width
+    const pageHeightPx = 1271; // A4 aspect ratio height at 900px width
     const blocks = [];
     const header = clonedElement.querySelector('.roadmap-header');
     const clientInfo = clonedElement.querySelector('.roadmap-client-info');
@@ -123,10 +123,10 @@ export async function generatePDF(elementId, filename) {
       };
     });
 
-    // Capture offscreen clone canvas (scale reduced to 1.5 for 2x performance boost)
+    // Capture offscreen clone canvas (scale 2 for high quality PDF render)
     const canvas = await html2canvas(clonedElement, {
       backgroundColor: '#050505',
-      scale: 1.5,
+      scale: 2,
       useCORS: true,
       logging: false,
     });

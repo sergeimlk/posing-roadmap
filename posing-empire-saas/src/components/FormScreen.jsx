@@ -11,12 +11,12 @@ import Calendar from './reactbits/Calendar';
 import { submitData } from '../utils/submitData';
 
 const CATEGORIES = [
-  { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
-  { value: 'Classic Physique', icon: '🏛️', label: 'Classic Physique' },
-  { value: 'Bodybuilding', icon: '💪', label: 'Bodybuilding' },
-  { value: 'Figure', icon: '👑', label: 'Figure' },
-  { value: 'Non compétiteur', icon: '🎯', label: 'Non compétiteur' },
-  { value: 'Autre', icon: '✨', label: 'Autre...' },
+  { value: "Men's Physique", label: "Men's Physique" },
+  { value: 'Classic Physique', label: 'Classic Physique' },
+  { value: 'Bodybuilding', label: 'Bodybuilding' },
+  { value: 'Figure', label: 'Figure' },
+  { value: 'Non compétiteur', label: 'Non compétiteur' },
+  { value: 'Autre', label: 'Autre...' },
 ];
 
 const FEDERATIONS = [
@@ -504,7 +504,6 @@ export default function FormScreen({ onSubmit }) {
                     whileHover={{ scale: 1.005 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
                     <span>{cat.label}</span>
                   </motion.button>
                 );
@@ -1030,7 +1029,7 @@ export default function FormScreen({ onSubmit }) {
             id="btn-submit"
             style={{ width: '100%' }}
           >
-            <span>Générer ma Roadmap</span>
+            <span>Générer ma Roadmap personnalisée</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
@@ -1070,7 +1069,6 @@ export default function FormScreen({ onSubmit }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.6</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
@@ -1082,9 +1080,6 @@ export default function FormScreen({ onSubmit }) {
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
         </p>
-        <div style={{ color: '#151515', fontSize: '8px', marginTop: '6px', fontFamily: 'monospace' }}>
-          29.05.2026
-        </div>
       </div>
 
       {/* Glassmorphism Legal Modal */}

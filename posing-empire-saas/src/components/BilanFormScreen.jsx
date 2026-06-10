@@ -11,12 +11,12 @@ import { submitData } from '../utils/submitData';
 
 // ── Reusable constants (same as onboarding) ──
 const CATEGORIES = [
-  { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
-  { value: 'Classic Physique', icon: '🏛️', label: 'Classic Physique' },
-  { value: 'Bodybuilding', icon: '💪', label: 'Bodybuilding' },
-  { value: 'Figure', icon: '👑', label: 'Figure' },
-  { value: 'Non compétiteur', icon: '🎯', label: 'Non compétiteur' },
-  { value: 'Autre', icon: '✨', label: 'Autre...' },
+  { value: "Men's Physique", label: "Men's Physique" },
+  { value: 'Classic Physique', label: 'Classic Physique' },
+  { value: 'Bodybuilding', label: 'Bodybuilding' },
+  { value: 'Figure', label: 'Figure' },
+  { value: 'Non compétiteur', label: 'Non compétiteur' },
+  { value: 'Autre', label: 'Autre...' },
 ];
 
 const FEDERATIONS = [
@@ -63,28 +63,6 @@ const MORPHOLOGIES = [
       </svg>
     )
   },
-  {
-    value: 'V',
-    label: 'Physique en V',
-    desc: 'Épaules larges, hanches et taille étroites',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <polygon points="8,12 32,12 20,48" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="14" y1="30" x2="26" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  },
-  {
-    value: 'O',
-    label: 'Physique en O',
-    desc: 'Silhouette ronde, taille peu définie',
-    svg: (
-      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
-        <ellipse cx="20" cy="30" rx="12" ry="18" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="8" y1="30" x2="32" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
-      </svg>
-    )
-  }
 ];
 
 function isGibberishText(text) {
@@ -441,7 +419,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
             <span className="text-gold-gradient">PERSONNALISÉ</span>
           </h1>
           <p className="form-subtitle">
-            Remplis ton bilan hebdomadaire — on génère ta roadmap de coaching pour la semaine.
+            Remplis ton bilan hebdomadaire — on génère ta fiche bilan personnalisée pour la semaine.
           </p>
         </div>
 
@@ -524,7 +502,6 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                     whileHover={{ scale: 1.005 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
                     <span>{cat.label}</span>
                   </motion.button>
                 );
@@ -1093,7 +1070,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               type="submit"
               className="btn-primary-gold btn-submit"
             >
-              <span>Générer ma Roadmap</span>
+              <span>Générer ma fiche bilan</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

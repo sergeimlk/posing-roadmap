@@ -389,8 +389,8 @@ export function buildTimeline(data) {
     s1Tasks.push(t("📋", "Règlement de l'accompagnement", M12.reglement));
     s1Tasks.push(t("📹", "Bien faire ses bilans", M12.bilans));
   } else {
-    s1Tasks.push(t("🚀", "Découvrir l'accompagnement 1:1 avec Manaël", CALENDLY_DECOUVERTE));
-    s1Tasks.push(t("📞", "Réserver ton appel de découverte gratuit", CALENDLY_DECOUVERTE));
+    s1Tasks.push(t("🚀", "Découvrir l'accompagnement avec Manaël", "https://www.skool.com/posing-empire-groupe-prive-6566/classroom"));
+    s1Tasks.push(t("📞", "Réserve ton appel de découverte gratuit", CALENDLY_DECOUVERTE));
   }
 
   // Fix typo to "Réserver ton appel de découverte gratuit"

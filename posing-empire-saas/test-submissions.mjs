@@ -1,11 +1,42 @@
-/**
- * Test script — envoie 3 personas de test vers Supabase + Google Sheets
- * Usage: node test-submissions.mjs
- */
+import fs from 'fs';
+import path from 'path';
 
-const SUPABASE_URL = 'https://henuxgmkcsbgmnusigfk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlbnV4Z21rY3NiZ21udXNpZ2ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDc0MzIsImV4cCI6MjA5NjU4MzQzMn0.eHo5UPNcoJjbKRccxnhfqomLeEYRwdgH-izKPdGnoAw';
-const ONBOARDING_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBQxx1DGXsGHgsq3NCzfwM1CHWPstZVwqD39FiCQuE4miL1EFYnXYL6XAuZXq3WxI/exec';
+// Chargeur simple de variables d'environnement depuis le fichier .env local
+function loadEnv() {
+  try {
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      envContent.split('\n').forEach(line => {
+        const match = line.match(/^\s*([\w.\-]+)\s*=\s*(.*)?\s*$/);
+        if (match) {
+          const key = match[1];
+          let value = match[2] || '';
+          if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
+            value = value.replace(/^"|"\s*$/g, '');
+          } else if (value.length > 0 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+            value = value.replace(/^'|'\s*$/g, '');
+          }
+          process.env[key] = value;
+        }
+      });
+    }
+  } catch (err) {
+    console.warn('⚠️ Impossible de charger le fichier .env :', err.message);
+  }
+}
+
+loadEnv();
+
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+const ONBOARDING_SHEET_URL = process.env.VITE_GOOGLE_SHEET_ONBOARDING_WEBHOOK_URL;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('❌ Erreur : VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY doivent être définis dans le fichier .env');
+  process.exit(1);
+}
+
 
 const personas = [
   {

@@ -1499,14 +1499,21 @@ body {
 
 /* ══════════════ HTML2CANVAS EXPORT FIXES ══════════════ */
 .html2canvas-container {
-  width: 800px !important;
-  min-width: 800px !important;
-  max-width: 800px !important;
+  width: 900px !important;
+  min-width: 900px !important;
+  max-width: 900px !important;
   padding: 0 !important;
   margin: 0 auto !important;
   background: #050505 !important;
   position: relative !important;
   transform: none !important;
+}
+
+/* ══════════════ COPY-PASTE FIX ══════════════ */
+.roadmap-page,
+.roadmap-page * {
+  user-select: text !important;
+  -webkit-user-select: text !important;
 }
 
 .html2canvas-container .text-gold-gradient {

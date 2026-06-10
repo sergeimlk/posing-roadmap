@@ -237,7 +237,7 @@ export default function RoadmapScreen({ data, onRestart }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <div className="roadmap-page">
+        <div className="roadmap-page" style={{ userSelect: 'text' }}>
           {/* HEADER */}
           <div className="roadmap-header">
             <div className="roadmap-logo-container">
@@ -510,7 +510,6 @@ export default function RoadmapScreen({ data, onRestart }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.6</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>
@@ -522,9 +521,6 @@ export default function RoadmapScreen({ data, onRestart }) {
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
         </p>
-        <div style={{ color: '#151515', fontSize: '8px', marginTop: '6px', fontFamily: 'monospace' }}>
-          29.05.2026
-        </div>
       </div>
     </main>
   );

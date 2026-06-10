@@ -1,12 +1,43 @@
-/**
- * Fix Supabase permissions + re-test 3 personas
- * Usage: node fix-and-test.mjs
- */
+import fs from 'fs';
+import path from 'path';
 
-const SUPABASE_URL = 'https://henuxgmkcsbgmnusigfk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlbnV4Z21rY3NiZ21udXNpZ2ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDc0MzIsImV4cCI6MjA5NjU4MzQzMn0.eHo5UPNcoJjbKRccxnhfqomLeEYRwdgH-izKPdGnoAw';
-const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlbnV4Z21rY3NiZ21udXNpZ2ZrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTAwNzQzMiwiZXhwIjoyMDk2NTgzNDMyfQ.tfPwY9_0aROAQJv60wELKn5YYL8gayWlw0lBFqKRRZM';
-const ONBOARDING_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBQxx1DGXsGHgsq3NCzfwM1CHWPstZVwqD39FiCQuE4miL1EFYnXYL6XAuZXq3WxI/exec';
+// Chargeur simple de variables d'environnement depuis le fichier .env local
+function loadEnv() {
+  try {
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      envContent.split('\n').forEach(line => {
+        const match = line.match(/^\s*([\w.\-]+)\s*=\s*(.*)?\s*$/);
+        if (match) {
+          const key = match[1];
+          let value = match[2] || '';
+          if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
+            value = value.replace(/^"|"\s*$/g, '');
+          } else if (value.length > 0 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+            value = value.replace(/^'|'\s*$/g, '');
+          }
+          process.env[key] = value;
+        }
+      });
+    }
+  } catch (err) {
+    console.warn('⚠️ Impossible de charger le fichier .env :', err.message);
+  }
+}
+
+loadEnv();
+
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+const SERVICE_ROLE_KEY = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+const ONBOARDING_SHEET_URL = process.env.VITE_GOOGLE_SHEET_ONBOARDING_WEBHOOK_URL;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('❌ Erreur : VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY doivent être définis dans le fichier .env');
+  process.exit(1);
+}
+
 
 // Step 1: Fix permissions using service_role key
 async function fixPermissions() {
@@ -23,15 +54,19 @@ async function fixPermissions() {
     GRANT SELECT ON public.bilans TO anon;
   `;
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/`, {
-    method: 'POST',
-    headers: {
-      'apikey': SERVICE_ROLE_KEY,
-      'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({}),
-  });
+  if (SERVICE_ROLE_KEY) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/`, {
+      method: 'POST',
+      headers: {
+        'apikey': SERVICE_ROLE_KEY,
+        'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+  } else {
+    console.log('  ℹ️ VITE_SUPABASE_SERVICE_ROLE_KEY non définie dans le .env — correction via API ignorée.\n');
+  }
 
   // Alternative: use the SQL endpoint directly via pg
   // Since we can't execute raw SQL via REST, let's just test if the insert works
