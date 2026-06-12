@@ -172,7 +172,7 @@ const M12 = {
   miseEnRelation: `${SKOOL_BASE}/6a58266e?md=e5de63ab2ea74ebf8e47947e015a27e1`,
 };
 
-const CALENDLY = "https://calendly.com/posing-session-reservation/appel-decouverte-posing-empire-afbbn-clone";
+const CALENDLY = "https://calendly.com/posing-session-reservation/appel-decouverte?month=2026-06";
 
 // ══════════ HELPERS ══════════
 

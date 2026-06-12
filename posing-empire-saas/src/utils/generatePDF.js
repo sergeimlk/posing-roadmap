@@ -100,7 +100,7 @@ export async function generatePDF(elementId, filename) {
       spacer.className = 'pdf-page-spacer';
       spacer.style.height = `${height}px`;
       spacer.style.width = '100%';
-      spacer.style.background = '#050505';
+      spacer.style.background = 'transparent';
       block.parentNode.insertBefore(spacer, block);
     });
 

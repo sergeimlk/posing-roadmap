@@ -250,7 +250,7 @@ const M12 = {
   miseEnRelation: `${SKOOL_BASE}/6a58266e?md=e5de63ab2ea74ebf8e47947e015a27e1`,
 };
 
-const CALENDLY_DECOUVERTE = "https://calendly.com/posing-session-reservation/appel-decouverte-posing-empire-afbbn-clone";
+const CALENDLY_DECOUVERTE = "https://calendly.com/posing-session-reservation/appel-decouverte?month=2026-06";
 
 // Helper: create a task with optional link
 function t(icon, text, link) {
@@ -389,7 +389,7 @@ export function buildTimeline(data) {
     s1Tasks.push(t("📋", "Règlement de l'accompagnement", M12.reglement));
     s1Tasks.push(t("📹", "Bien faire ses bilans", M12.bilans));
   } else {
-    s1Tasks.push(t("🚀", "Découvrir l'accompagnement avec Manaël", "https://www.skool.com/posing-empire-groupe-prive-6566/classroom"));
+    s1Tasks.push(t("🚀", "Découvrir l'accompagnement avec Manaël", "https://www.loom.com/share/6456342f737d4f26a273f2cd4a8e7642"));
     s1Tasks.push(t("📞", "Réserve ton appel de découverte gratuit", CALENDLY_DECOUVERTE));
   }
 

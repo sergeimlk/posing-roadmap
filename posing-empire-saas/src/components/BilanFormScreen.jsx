@@ -14,7 +14,6 @@ const CATEGORIES = [
   { value: "Men's Physique", label: "Men's Physique" },
   { value: 'Classic Physique', label: 'Classic Physique' },
   { value: 'Bodybuilding', label: 'Bodybuilding' },
-  { value: 'Figure', label: 'Figure' },
   { value: 'Non compétiteur', label: 'Non compétiteur' },
   { value: 'Autre', label: 'Autre...' },
 ];
