@@ -187,7 +187,7 @@ export default function RoadmapScreen({ data, onRestart }) {
 
   const handleDownload = useCallback(async () => {
     setDownloading(true);
-    const success = await generatePDF('roadmap-pdf-content', `Roadmap - ${data.fullname || 'Athlete'}`);
+    const success = await generatePDF('roadmap-pdf-content', `Roadmap Onboarding - ${data.fullname || 'Athlete'}`);
     if (!success) {
       alert('Erreur lors de la génération du PDF. Essaye à nouveau.');
     }
@@ -214,7 +214,7 @@ export default function RoadmapScreen({ data, onRestart }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
           </svg>
-          <span>{downloading ? 'Génération en cours...' : 'Télécharger ma Roadmap PDF'}</span>
+          <span>{downloading ? 'Génération en cours...' : "Télécharger ma Roadmap d'Onboarding"}</span>
         </button>
         <button
           ref={restartBtnRef}
@@ -249,7 +249,7 @@ export default function RoadmapScreen({ data, onRestart }) {
               <span className="text-gold-gradient">EMPIRE</span>
             </div>
             */}
-            <div className="roadmap-program-label">ROAD MAP — PROGRAMME PERSONNALISÉ</div>
+            <div className="roadmap-program-label">ROADMAP D'ONBOARDING</div>
           </div>
 
           {/* CLIENT INFO */}

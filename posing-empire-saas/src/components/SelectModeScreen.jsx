@@ -7,7 +7,7 @@ const MODES = [
     icon: '📋',
     title: 'Questionnaire d\'Onboarding',
     subtitle: 'Première fois ici ?',
-    description: 'Remplis ce questionnaire d\'inscription pour recevoir ta roadmap personnalisée de 12 semaines.',
+    description: 'Remplis ce questionnaire d\'inscription pour recevoir ta roadmap d\'onboarding de 12 semaines.',
     cta: 'Commencer l\'onboarding',
   },
   {

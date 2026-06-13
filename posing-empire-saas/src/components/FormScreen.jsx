@@ -423,7 +423,7 @@ export default function FormScreen({ onSubmit }) {
           </div>
           <h1 className="form-title">
             <span className="text-white-gradient">TA ROADMAP </span>
-            <span className="text-gold-gradient">PERSONNALISÉE</span>
+            <span className="text-gold-gradient">D'ONBOARDING</span>
           </h1>
           <p className="form-subtitle">
             Remplis ce questionnaire en 2 minutes — on génère ta roadmap de coaching sur-mesure.
@@ -1028,7 +1028,7 @@ export default function FormScreen({ onSubmit }) {
             id="btn-submit"
             style={{ width: '100%' }}
           >
-            <span>Générer ma Roadmap personnalisée</span>
+            <span>Générer ma Roadmap d'onboarding</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
@@ -1061,7 +1061,7 @@ export default function FormScreen({ onSubmit }) {
           </motion.div>
 
           <p className="form-privacy">
-            Vos données de profil sont traitées de manière sécurisée pour générer votre roadmap personnalisée.
+            Vos données de profil sont traitées de manière sécurisée pour générer votre roadmap d'onboarding.
           </p>
         </BorderGlow>
       </motion.div>
@@ -1132,7 +1132,7 @@ export default function FormScreen({ onSubmit }) {
                     <h4>1. Données Collectées</h4>
                     <p>Nous collectons votre nom, catégorie de pose, niveau d'expérience, objectifs physiques, problématiques rencontrées et disponibilités, uniquement via ce formulaire.</p>
                     <h4>2. Finalité du Traitement</h4>
-                    <p>Ces informations sont traitées dans le but unique d'établir votre roadmap d'apprentissage personnalisée et de faciliter votre onboarding vers notre plateforme communautaire Skool.</p>
+                    <p>Ces informations sont traitées dans le but unique d'établir votre roadmap d'onboarding et de faciliter votre onboarding vers notre plateforme communautaire Skool.</p>
                     <h4>3. Conservation et Sécurité</h4>
                     <p>Vos données sont conservées de manière sécurisée et ne sont jamais vendues, louées ou transmises à des tiers sans votre consentement explicite.</p>
                     <h4>4. Vos Droits (RGPD)</h4>

@@ -17,7 +17,7 @@ export default function Navbar() {
           <line x1="15" y1="6" x2="15" y2="21" />
         </svg>
       ),
-      label: 'Roadmap',
+      label: "Roadmap d'Onboarding",
       onClick: () => { window.location.href = '/'; }
     },
     {
@@ -80,7 +80,7 @@ export default function Navbar() {
             ref={link1Ref}
             href="/"
             className="nav-circle-link nav-link-roadmap mobile-only-link"
-            title="Roadmap Personnalisée"
+            title="Roadmap d'Onboarding"
           >
             <span className="nav-link-icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-nav-roadmap)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
@@ -89,7 +89,7 @@ export default function Navbar() {
                 <line x1="15" y1="6" x2="15" y2="21" />
               </svg>
             </span>
-            <span className="nav-link-text">Roadmap Personnalisée</span>
+            <span className="nav-link-text">Roadmap d'Onboarding</span>
           </a>
 
           {/* Bilan Hebdomadaire (Mobile Only) */}

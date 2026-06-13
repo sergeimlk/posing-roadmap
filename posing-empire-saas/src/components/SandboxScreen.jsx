@@ -227,7 +227,7 @@ export default function SandboxScreen({ onBack }) {
           <ul style={{ color: '#aaa', margin: 0, paddingLeft: '20px', fontSize: '0.875rem', lineHeight: '1.6' }}>
             {activeTab === 'shiny' && (
               <>
-                <li>Sur le titre principal « TA ROADMAP PERSONNALISÉE » pour le faire scintiller discrètement.</li>
+                <li>Sur le titre principal « TA ROADMAP D'ONBOARDING » pour le faire scintiller discrètement.</li>
                 <li>Sur le texte intérieur du bouton d'action principal de soumission pour le rendre encore plus attractif.</li>
               </>
             )}

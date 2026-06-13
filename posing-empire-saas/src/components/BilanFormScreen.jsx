@@ -415,10 +415,10 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
           </div>
           <h1 className="form-title">
             <span className="text-white-gradient">BILAN </span>
-            <span className="text-gold-gradient">PERSONNALISÉ</span>
+            <span className="text-gold-gradient">HEBDOMADAIRE</span>
           </h1>
           <p className="form-subtitle">
-            Remplis ton bilan hebdomadaire — on génère ta fiche bilan personnalisée pour la semaine.
+            Remplis ton bilan hebdomadaire — on génère ta fiche bilan hebdomadaire pour la semaine.
           </p>
         </div>
 
